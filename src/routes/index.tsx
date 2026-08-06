@@ -344,7 +344,7 @@ function Index() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 text-sm text-muted-foreground md:flex-row">
           <Logo />
           <span>www.printzy.com.br</span>
-          <span>© {new Date().getFullYear()} Printzy Studio</span>
+          <span>© 2026 Printzy Studio</span>
         </div>
       </footer>
     </div>
