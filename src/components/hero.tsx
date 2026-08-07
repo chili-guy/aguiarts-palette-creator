@@ -9,6 +9,8 @@ import {
   Plus,
   ArrowRight,
 } from "lucide-react";
+import heroBg from "@/assets/hero-bg-final.jpg.asset.json";
+
 
 const tools = [
   { icon: Wand2, label: "Halftone" },
