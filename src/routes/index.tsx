@@ -277,10 +277,10 @@ function Index() {
         {/* Planos */}
         <section id="planos" className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Escolha seu plano e comece a produzir hoje
+            Planos que cabem no volume da sua gráfica
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Comece de graça. Quando sua produção crescer, o PRO libera tudo sem limite de exports.
+            Comece de graça e teste com os próximos pedidos. Quando o volume crescer, o PRO libera exports ilimitados.
           </p>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {plans.map((p) => (
