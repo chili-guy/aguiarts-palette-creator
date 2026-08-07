@@ -193,10 +193,10 @@ function Index() {
         {/* Benefícios */}
         <section className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Menos etapa. Mais produção. Menos dor de cabeça.
+            Sua gráfica entrega mais, com menos refugo
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            A Printzy foi feita para quem vive de estampa. Cada ferramenta resolve um problema real do dia a dia da produção.
+            A Printzy resolve a etapa que mais atrasa pedido: o tratamento do arquivo que o cliente manda.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {benefits.map((b) => (
