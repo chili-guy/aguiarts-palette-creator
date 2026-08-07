@@ -131,6 +131,83 @@ export function Hero() {
           transition={{ ...baseTransition, duration: reduceMotion ? 0 : 0.9, delay: 0.15 }}
           className="relative mx-auto w-full max-w-md"
         >
+          {/* Solar system decoration */}
+          <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center" aria-hidden="true">
+            <svg viewBox="0 0 400 400" className="h-[140%] w-[140%] opacity-80">
+              <defs>
+                <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="hsl(var(--primary-glow))" stopOpacity="0.9" />
+                  <stop offset="45%" stopColor="hsl(var(--accent))" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                </radialGradient>
+                <radialGradient id="planet1" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stopColor="#c084fc" />
+                  <stop offset="100%" stopColor="#581c87" />
+                </radialGradient>
+                <radialGradient id="planet2" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stopColor="#a78bfa" />
+                  <stop offset="100%" stopColor="#3730a3" />
+                </radialGradient>
+                <radialGradient id="planet3" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stopColor="#f0abfc" />
+                  <stop offset="100%" stopColor="#7e22ce" />
+                </radialGradient>
+              </defs>
+
+              {/* Orbits */}
+              <circle cx="200" cy="200" r="90" fill="none" stroke="hsl(var(--primary-glow))" strokeOpacity="0.15" strokeWidth="1" strokeDasharray="4 4" />
+              <circle cx="200" cy="200" r="140" fill="none" stroke="hsl(var(--accent))" strokeOpacity="0.12" strokeWidth="1" />
+              <ellipse cx="200" cy="200" rx="170" ry="120" fill="none" stroke="hsl(var(--primary-glow))" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="8 6" />
+
+              {/* Sun behind film */}
+              <circle cx="200" cy="200" r="55" fill="url(#sunGlow)" className="animate-pulse" />
+              <circle cx="200" cy="200" r="18" fill="hsl(var(--primary-glow))" opacity="0.9" />
+
+              {/* Planet 1 */}
+              <motion.g
+                {...(reduceMotion ? {} : { animate: { rotate: 360 } })}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                style={{ transformOrigin: "200px 200px" }}
+              >
+                <circle cx="290" cy="200" r="10" fill="url(#planet1)" />
+                <circle cx="290" cy="200" r="14" fill="none" stroke="#c084fc" strokeOpacity="0.25" strokeWidth="1" />
+              </motion.g>
+
+              {/* Planet 2 */}
+              <motion.g
+                {...(reduceMotion ? {} : { animate: { rotate: -360 } })}
+                transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
+                style={{ transformOrigin: "200px 200px" }}
+              >
+                <circle cx="200" cy="340" r="14" fill="url(#planet2)" />
+                <ellipse cx="200" cy="340" rx="22" ry="6" fill="none" stroke="#a78bfa" strokeOpacity="0.3" strokeWidth="1.5" />
+              </motion.g>
+
+              {/* Planet 3 */}
+              <motion.g
+                {...(reduceMotion ? {} : { animate: { rotate: 360 } })}
+                transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+                style={{ transformOrigin: "200px 200px" }}
+              >
+                <circle cx="65" cy="200" r="8" fill="url(#planet3)" />
+              </motion.g>
+
+              {/* Stars */}
+              {[...Array(12)].map((_, i) => (
+                <circle
+                  key={i}
+                  cx={40 + (i * 31) % 320}
+                  cy={30 + (i * 47) % 340}
+                  r={1.2 + (i % 2) * 0.8}
+                  fill="white"
+                  opacity={0.4 + (i % 3) * 0.2}
+                  className="animate-pulse"
+                  style={{ animationDelay: `${i * 0.3}s`, animationDuration: `${2 + (i % 3)}s` }}
+                />
+              ))}
+            </svg>
+          </div>
+
           <motion.div
             {...(reduceMotion ? {} : { animate: { y: [0, -12, 0] } })}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
@@ -142,7 +219,7 @@ export function Hero() {
               alt="Filme de transfer DTF transparente com estampa geométrica de astronauta em roxo e dourado"
               width={1024}
               height={1024}
-              className="w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)]"
+              className="relative z-10 w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)]"
             />
           </motion.div>
 
@@ -151,7 +228,7 @@ export function Hero() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ ...baseTransition, delay: 0.5 }}
-            className="absolute -left-2 top-6 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-left-8"
+            className="absolute -left-2 top-6 z-20 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-left-8"
           >
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
               Halftone
@@ -163,7 +240,7 @@ export function Hero() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ ...baseTransition, delay: 0.65 }}
-            className="absolute -right-2 bottom-8 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-right-6"
+            className="absolute -right-2 bottom-8 z-20 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-right-6"
           >
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
