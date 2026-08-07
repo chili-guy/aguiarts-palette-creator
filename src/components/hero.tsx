@@ -131,7 +131,7 @@ export function Hero() {
           className="perspective-1000"
         >
           <motion.div
-            whileHover={reduceMotion ? undefined : { y: -6, rotateX: 2, rotateY: -2 }}
+            {...(reduceMotion ? {} : { whileHover: { y: -6, rotateX: 2, rotateY: -2 } })}
             transition={{ type: "spring", stiffness: 120, damping: 14 }}
             className="relative rounded-3xl border border-border bg-card/80 p-6 shadow-card backdrop-blur-md"
           >
