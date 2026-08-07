@@ -55,18 +55,16 @@ export function BeforeAfter({ before, after, beforeAlt, afterAlt, checkered }: P
       </div>
 
       {/* Before (clipped) */}
-      <div className="absolute inset-0 overflow-hidden" style={{ width: `${pos}%` }}>
-        <img
-          src={before}
-          alt={beforeAlt}
-          loading="lazy"
-          width={800}
-          height={800}
-          className="h-full w-full object-cover"
-          style={{ width: ref.current?.clientWidth ?? "100%", maxWidth: "none" }}
-          draggable={false}
-        />
-      </div>
+      <img
+        src={before}
+        alt={beforeAlt}
+        loading="lazy"
+        width={800}
+        height={800}
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
+        draggable={false}
+      />
 
       {/* Labels */}
       <span className="pointer-events-none absolute left-3 top-3 rounded-md bg-background/80 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground backdrop-blur">
