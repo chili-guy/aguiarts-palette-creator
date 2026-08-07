@@ -38,18 +38,18 @@ export function Hero() {
 
   return (
     <section className="relative isolate overflow-hidden bg-background">
-      {/* Background image */}
+      {/* Space background */}
       <img
-        src={heroBg}
+        src={heroSpaceBg}
         alt=""
         aria-hidden="true"
         width={1920}
-        height={1088}
-        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover object-right opacity-90"
+        height={1080}
+        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover object-right opacity-95"
       />
       {/* Readability scrims */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(100deg,var(--background)_10%,color-mix(in_oklab,var(--background)_70%,transparent)_45%,transparent_80%)]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(100deg,var(--background)_12%,color-mix(in_oklab,var(--background)_72%,transparent)_48%,transparent_85%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-t from-background to-transparent" />
       <div className="pointer-events-none absolute -left-24 top-10 -z-10 h-[30rem] w-[30rem] rounded-full bg-primary/20 blur-[120px] animate-float-slow" />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pb-20 pt-16 md:grid-cols-[1.05fr_0.95fr] md:pb-28 md:pt-24">
