@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles, ArrowRight, Check, Wand2, Layers, Scissors } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
-import heroShirt from "@/assets/hero-shirt.png";
+import heroFilm from "@/assets/hero-film.png";
 
 const proofs = [
   "Sem instalar nada",
