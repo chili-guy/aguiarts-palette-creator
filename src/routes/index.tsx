@@ -241,11 +241,11 @@ function Index() {
         {/* Exemplos antes e depois */}
         <section id="exemplos" className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Veja o antes e o depois de cada ferramenta
+            O arquivo que chega x o arquivo que vai para a máquina
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Arraste o cursor em cada exemplo e compare o arquivo bruto com o resultado
-            que sai pronto da Printzy.
+            Arraste o cursor e compare: de um lado o material bruto do cliente, do
+            outro o arquivo tratado e pronto para produção.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {examples.map((ex) => (
