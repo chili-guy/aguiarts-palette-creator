@@ -107,10 +107,10 @@ const examples = [
 ];
 
 const benefits = [
-  { kicker: "MAIS VELOCIDADE", title: "Arte pronta em minutos", desc: "Pare de perder tempo com programas pesados. Suba, ajuste e exporte direto no navegador." },
-  { kicker: "MENOS RETRABALHO", title: "Arquivos que saem certo", desc: "Ferramentas calibradas para DTF e DTG reduzem erros de impressão e desperdício." },
-  { kicker: "EXPORTS ILIMITADOS", title: "Produção sem travar", desc: "Plano PRO libera downloads ilimitados para você produzir o quanto precisar." },
-  { kicker: "TUDO EM UM LUGAR", title: "Um fluxo só, do início ao fim", desc: "Halftone, vetor, mockup, fundo, bordas e spot — sem trocar de aplicativo." },
+  { kicker: "MAIS PEDIDOS/DIA", title: "Fila de arte destravada", desc: "O que travava no setor de criação sai pronto em minutos, direto do navegador." },
+  { kicker: "MENOS REFUGO", title: "Arquivo certo na primeira tiragem", desc: "Perfis calibrados para DTF e DTG reduzem reimpressão, desperdício de filme e tinta." },
+  { kicker: "SEM LIMITE", title: "Volume de gráfica de verdade", desc: "No plano PRO sua equipe exporta quantos jobs precisar, todos os dias." },
+  { kicker: "UM FLUXO SÓ", title: "Do orçamento à folha final", desc: "Tratamento, vetor, mockup, molduras e montagem DTF sem trocar de software." },
 ];
 
 const plans = [
@@ -118,7 +118,7 @@ const plans = [
     name: "Grátis",
     price: "R$ 0",
     period: "/ mês",
-    desc: "Teste a plataforma e já prepare suas primeiras artes.",
+    desc: "Para a gráfica testar o fluxo com os primeiros pedidos.",
     items: ["Ferramentas grátis liberadas", "5 exports PRO por mês", "Conta Printzy gratuita"],
     cta: "Criar conta grátis",
     featured: false,
@@ -127,7 +127,7 @@ const plans = [
     name: "Mensal PRO",
     price: "R$ 19,90",
     period: "/ mês",
-    desc: "O plano ideal para quem produz todo dia e quer resultado profissional.",
+    desc: "Para gráficas com produção diária e prazo apertado.",
     items: ["Exports PRO ilimitados", "Todas as ferramentas premium", "Atualizações incluídas", "Suporte prioritário"],
     cta: "Assinar agora",
     featured: true,
@@ -136,7 +136,7 @@ const plans = [
     name: "Anual PRO",
     price: "R$ 127",
     period: "/ ano",
-    desc: "Melhor custo para quem quer produzir o ano inteiro pagando menos.",
+    desc: "O menor custo por pedido para quem produz o ano inteiro.",
     items: ["Exports PRO ilimitados", "Melhor custo-benefício", "Atualizações incluídas", "Acesso anual completo"],
     cta: "Economizar no anual",
     featured: false,
@@ -144,10 +144,11 @@ const plans = [
 ];
 
 const faqs = [
-  { q: "Preciso instalar algum programa?", a: "Não. Tudo funciona no navegador do computador. Basta criar uma conta e começar." },
-  { q: "Funciona para DTF e DTG?", a: "Sim. As ferramentas foram calibradas para os dois fluxos, com exports prontos para produção." },
-  { q: "Qual a diferença do grátis para o PRO?", a: "O grátis libera ferramentas básicas e 5 exports PRO. O PRO libera tudo, com downloads ilimitados." },
-  { q: "Posso cancelar a assinatura quando quiser?", a: "Sim. O plano mensal pode ser cancelado a qualquer momento. O anual garante o melhor preço." },
+  { q: "Preciso instalar algum programa na gráfica?", a: "Não. Tudo roda no navegador de qualquer computador do setor de arte. Basta criar uma conta." },
+  { q: "Atende DTF, DTG e serigrafia?", a: "Sim. As ferramentas foram calibradas para esses fluxos, com exports prontos para o RIP e para a prensa." },
+  { q: "Mais de uma pessoa pode usar?", a: "Sim. A equipe do setor de arte pode trabalhar na mesma conta PRO, com exports ilimitados." },
+  { q: "Qual a diferença do grátis para o PRO?", a: "O grátis libera as ferramentas básicas e 5 exports PRO. O PRO libera tudo, com downloads ilimitados." },
+  { q: "Posso cancelar quando quiser?", a: "Sim. O mensal pode ser cancelado a qualquer momento e o anual garante o melhor preço." },
 ];
 
 function Logo() {
