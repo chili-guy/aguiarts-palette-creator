@@ -1,13 +1,18 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Sparkles, Zap, Clock, MousePointer2 } from "lucide-react";
+import { Sparkles, ArrowRight, Check, Wand2, Layers, Scissors } from "lucide-react";
+import heroBg from "@/assets/hero-bg.jpg";
+import heroShirt from "@/assets/hero-shirt.png";
 
-const tools = [
-  { icon: "⠿", name: "Halftone", color: "bg-primary/20 text-primary-glow" },
-  { icon: "◒", name: "Fundo", color: "bg-accent/20 text-accent" },
-  { icon: "◇", name: "Vetor", color: "bg-primary/20 text-primary-glow" },
-  { icon: "▣", name: "Mockup", color: "bg-accent/20 text-accent" },
-  { icon: "⌗", name: "Molduras", color: "bg-primary/20 text-primary-glow" },
-  { icon: "◎", name: "Spot", color: "bg-accent/20 text-accent" },
+const proofs = [
+  "Sem instalar nada",
+  "Arquivos em 300 DPI",
+  "Exportação ilimitada no PRO",
+];
+
+const chips = [
+  { icon: Wand2, label: "Halftone automático" },
+  { icon: Scissors, label: "Remove fundo em 1 clique" },
+  { icon: Layers, label: "Vetoriza e separa cores" },
 ];
 
 export function Hero() {
@@ -22,190 +27,158 @@ export function Hero() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: reduceMotion ? 0 : 0.1, delayChildren: 0.1 },
+      transition: { staggerChildren: reduceMotion ? 0 : 0.09, delayChildren: 0.05 },
     },
   };
 
   const item = {
-    hidden: { opacity: 0, y: 24 },
+    hidden: { opacity: 0, y: 22 },
     visible: { opacity: 1, y: 0, transition: baseTransition },
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-hero">
-      {/* Animated ambient background */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-20 top-0 h-[32rem] w-[32rem] rounded-full bg-primary/20 blur-[100px] animate-float-slow" />
-        <div className="absolute right-10 top-20 h-[24rem] w-[24rem] rounded-full bg-primary-glow/15 blur-[80px] animate-float-medium" />
-        <div className="absolute bottom-0 left-1/3 h-[20rem] w-[20rem] rounded-full bg-accent/10 blur-[80px] animate-float-slow" />
-      </div>
+    <section className="relative isolate overflow-hidden bg-background">
+      {/* Background image */}
+      <img
+        src={heroBg}
+        alt=""
+        aria-hidden="true"
+        width={1920}
+        height={1088}
+        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover object-right opacity-90"
+      />
+      {/* Readability scrims */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(100deg,var(--background)_10%,color-mix(in_oklab,var(--background)_70%,transparent)_45%,transparent_80%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-background to-transparent" />
+      <div className="pointer-events-none absolute -left-24 top-10 -z-10 h-[30rem] w-[30rem] rounded-full bg-primary/20 blur-[120px] animate-float-slow" />
 
-      <div className="relative mx-auto grid max-w-6xl gap-12 px-5 py-20 md:grid-cols-2 md:items-center md:py-28">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pb-20 pt-16 md:grid-cols-[1.05fr_0.95fr] md:pb-28 md:pt-24">
         {/* Copy column */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={container}
-          className="max-w-xl"
-        >
+        <motion.div initial="hidden" animate="visible" variants={container} className="max-w-xl">
           <motion.span
             variants={item}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-4 py-1.5 text-xs font-semibold tracking-widest text-muted-foreground backdrop-blur-sm"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground backdrop-blur-sm"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-glow opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary-glow" />
             </span>
-            PLATAFORMA ONLINE PARA DTF E DTG
+            Estúdio online para DTF e DTG
           </motion.span>
 
           <motion.h1
             variants={item}
-            className="mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl"
+            className="mt-6 font-display text-[2.6rem] font-bold leading-[1.03] tracking-tight md:text-[4rem]"
           >
-            Produza mais{" "}
-            <span className="bg-gradient-to-r from-primary-glow to-accent bg-clip-text text-transparent">
-              estampas
+            Prepare estampas{" "}
+            <span className="bg-gradient-to-r from-primary-glow via-accent to-primary-glow bg-clip-text text-transparent">
+              prontas para imprimir
             </span>{" "}
-            em menos tempo
+            em minutos
           </motion.h1>
 
-          <motion.p
-            variants={item}
-            className="mt-6 text-lg text-muted-foreground"
-          >
-            Halftone, vetorização, remoção de fundo, mockups e preparação de
-            arquivos — tudo em um só lugar, sem instalar nada.
+          <motion.p variants={item} className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
+            Halftone, remoção de fundo, vetorização, mockups e separação de cores
+            no navegador. Menos retrabalho na prensa, mais pedidos entregues.
           </motion.p>
 
-          <motion.div
-            variants={item}
-            className="mt-8 flex flex-wrap gap-3"
-          >
+          <motion.div variants={item} className="mt-7 flex flex-wrap gap-2">
+            {chips.map((c) => (
+              <span
+                key={c.label}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm"
+              >
+                <c.icon className="h-3.5 w-3.5 text-primary-glow" />
+                {c.label}
+              </span>
+            ))}
+          </motion.div>
+
+          <motion.div variants={item} className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             <a
               href="#planos"
-              className="group relative overflow-hidden rounded-full bg-gradient-primary px-7 py-3 font-semibold text-primary-foreground shadow-elegant transition-transform hover:scale-[1.03]"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-primary px-8 py-4 font-semibold text-primary-foreground shadow-elegant transition-transform hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-glow"
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Criar conta grátis
-              </span>
-              <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-t from-white/20 to-transparent transition-transform duration-500 group-hover:translate-y-0" />
+              <Sparkles className="h-4 w-4" />
+              Começar grátis
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#ferramentas"
-              className="rounded-full border border-border px-7 py-3 font-semibold text-foreground transition-colors hover:bg-secondary"
+              className="inline-flex items-center justify-center rounded-full border border-border bg-card/40 px-8 py-4 font-semibold text-foreground backdrop-blur-sm transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-glow"
             >
-              Conhecer as ferramentas
+              Ver ferramentas
             </a>
           </motion.div>
 
-          <motion.div
+          <motion.ul
             variants={item}
-            className="mt-8 flex flex-wrap items-center gap-5 text-sm text-muted-foreground"
+            className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground"
           >
-            <div className="flex items-center gap-1.5">
-              <span className="text-accent">★★★★★</span>
-              <span className="font-semibold text-foreground">4,9/5</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Zap className="h-4 w-4 text-primary-glow" />
-              <span>5.000+ artes processadas</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-primary-glow" />
-              <span>Pronto em minutos</span>
-            </div>
-          </motion.div>
+            {proofs.map((p) => (
+              <li key={p} className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-accent" />
+                {p}
+              </li>
+            ))}
+          </motion.ul>
         </motion.div>
 
-        {/* Dashboard mockup */}
+        {/* Visual column */}
         <motion.div
-          initial={{ opacity: 0, x: 40, rotateY: 8 }}
-          animate={{ opacity: 1, x: 0, rotateY: 0 }}
-          transition={{
-            ...baseTransition,
-            duration: reduceMotion ? 0 : 0.9,
-            delay: 0.2,
-          }}
-          className="perspective-1000"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...baseTransition, duration: reduceMotion ? 0 : 0.9, delay: 0.15 }}
+          className="relative mx-auto w-full max-w-md"
         >
           <motion.div
-            {...(reduceMotion ? {} : { whileHover: { y: -6, rotateX: 2, rotateY: -2 } })}
-            transition={{ type: "spring", stiffness: 120, damping: 14 }}
-            className="relative rounded-3xl border border-border bg-card/80 p-6 shadow-card backdrop-blur-md"
+            {...(reduceMotion ? {} : { animate: { y: [0, -12, 0] } })}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
           >
-            {/* Toolbar */}
-            <div className="flex items-center justify-between border-b border-border pb-4">
-              <div className="flex items-center gap-2">
-                <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-primary font-display text-sm font-bold text-primary-foreground">
-                  P
-                </div>
-                <span className="font-display text-sm font-semibold">Printzy Studio</span>
-              </div>
-              <span className="text-xs text-muted-foreground">Painel • Ferramentas • Projetos</span>
-            </div>
+            <div className="absolute inset-6 -z-10 rounded-full bg-primary/30 blur-[90px]" />
+            <img
+              src={heroShirt}
+              alt="Camiseta preta com estampa DTF de astronauta geométrico em tons de roxo e dourado"
+              width={1024}
+              height={1024}
+              className="w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)]"
+            />
+          </motion.div>
 
-            {/* Tool grid */}
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              {tools.map((t, i) => (
-                <motion.div
-                  key={t.name}
-                  initial={{ opacity: 0, y: 12, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{
-                    ...baseTransition,
-                    delay: 0.4 + i * 0.06,
-                  }}
-                  {...(reduceMotion ? {} : { whileHover: { scale: 1.03, y: -2 } })}
-                  className={`group flex cursor-default items-center gap-3 rounded-xl ${t.color} p-3 transition-colors`}
+          {/* Floating stat cards */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ ...baseTransition, delay: 0.5 }}
+            className="absolute -left-2 top-6 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-left-8"
+          >
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              Halftone
+            </div>
+            <div className="mt-0.5 font-display text-lg font-bold">45 LPI • 22°</div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ ...baseTransition, delay: 0.65 }}
+            className="absolute -right-2 bottom-8 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-right-6"
+          >
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="text-xs font-medium">Arquivo pronto</span>
+            </div>
+            <div className="mt-1.5 flex gap-1.5">
+              {["PNG", "SVG", "PDF"].map((f) => (
+                <span
+                  key={f}
+                  className="rounded-md bg-secondary px-2 py-0.5 text-[10px] font-semibold text-foreground"
                 >
-                  <span className="text-xl">{t.icon}</span>
-                  <div>
-                    <div className="text-sm font-semibold text-foreground">{t.name}</div>
-                    <div className="text-[10px] text-muted-foreground">Clique para usar</div>
-                  </div>
-                </motion.div>
+                  {f}
+                </span>
               ))}
             </div>
-
-            {/* Preview card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ ...baseTransition, delay: 0.8 }}
-              className="mt-5 rounded-xl border border-dashed border-border bg-secondary/50 p-4"
-            >
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span className="flex items-center gap-2">
-                  <MousePointer2 className="h-4 w-4 text-primary-glow" />
-                  Projeto pronto para exportar
-                </span>
-                <span className="rounded-full bg-card px-2 py-0.5 text-[10px] font-medium">300 DPI</span>
-              </div>
-              <div className="mt-3 flex gap-2">
-                {["PNG", "SVG", "PDF"].map((fmt) => (
-                  <span
-                    key={fmt}
-                    className="rounded-md bg-card px-2 py-1 text-xs font-medium text-foreground"
-                  >
-                    {fmt}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Floating status badge */}
-            <motion.div
-              {...(reduceMotion ? {} : { animate: { y: [0, -6, 0] } })}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -right-3 -top-3 rounded-2xl border border-border bg-card px-3 py-2 shadow-card"
-            >
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-xs font-medium">Online</span>
-              </div>
-            </motion.div>
           </motion.div>
         </motion.div>
       </div>
