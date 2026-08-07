@@ -21,6 +21,7 @@
 @theme inline {
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
   --color-primary-glow: var(--primary-glow);
   --radius-sm: calc(var(--radius) - 4px);
 
@@ -66,63 +67,58 @@
 }
 
 :root {
-  --radius: 0.875rem;
-  --background: oklch(0.16 0.06 300);
-  --foreground: oklch(0.97 0.01 300);
-  --card: oklch(0.22 0.08 300);
-  --card-foreground: oklch(0.97 0.01 300);
-  --popover: oklch(0.22 0.08 300);
-  --popover-foreground: oklch(0.97 0.01 300);
-  --primary: oklch(0.55 0.24 300);
-  --primary-foreground: oklch(0.99 0 0);
-  --primary-glow: oklch(0.72 0.16 305);
-  --secondary: oklch(0.28 0.09 300);
-  --secondary-foreground: oklch(0.97 0.01 300);
-  --muted: oklch(0.26 0.07 300);
-  --muted-foreground: oklch(0.76 0.04 300);
-  --accent: oklch(0.78 0.16 75);
-  --accent-foreground: oklch(0.18 0.05 300);
-  --destructive: oklch(0.6 0.23 25);
+  /*
+   * Printzy brand palette: the vivid violet used across the brand's own
+   * social/marketing material, paired with exactly one bold spot-color
+   * accent — a hot magenta, one of the actual CMYK process inks — used
+   * sparingly on the thing that matters most on the page.
+   */
+  --radius: 0.625rem;
+  --background: oklch(0.24 0.14 302);
+  --foreground: oklch(0.98 0.008 300);
+  --card: oklch(0.31 0.145 302);
+  --card-foreground: oklch(0.98 0.008 300);
+  --popover: oklch(0.31 0.145 302);
+  --popover-foreground: oklch(0.98 0.008 300);
+  --primary: oklch(0.17 0.09 302);
+  --primary-foreground: oklch(0.98 0.008 300);
+  --primary-glow: oklch(0.42 0.17 302);
+  --secondary: oklch(0.36 0.11 302);
+  --secondary-foreground: oklch(0.98 0.008 300);
+  --muted: oklch(0.34 0.1 302);
+  --muted-foreground: oklch(0.82 0.045 300);
+  --accent: oklch(0.64 0.23 350);
+  --accent-foreground: oklch(0.99 0.005 300);
+  --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.99 0 0 / 12%);
-  --input: oklch(0.99 0 0 / 14%);
-  --ring: oklch(0.62 0.2 300);
-  --chart-1: oklch(0.55 0.24 300);
-  --chart-2: oklch(0.72 0.16 305);
-  --chart-3: oklch(0.78 0.16 75);
-  --chart-4: oklch(0.6 0.15 260);
-  --chart-5: oklch(0.7 0.12 330);
-  --sidebar: oklch(0.2 0.07 300);
-  --sidebar-foreground: oklch(0.97 0.01 300);
-  --sidebar-primary: oklch(0.55 0.24 300);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.28 0.09 300);
-  --sidebar-accent-foreground: oklch(0.97 0.01 300);
-  --sidebar-border: oklch(0.99 0 0 / 12%);
-  --sidebar-ring: oklch(0.62 0.2 300);
+  --border: oklch(0.98 0 0 / 14%);
+  --input: oklch(0.98 0 0 / 18%);
+  --ring: oklch(0.64 0.23 350);
+  --chart-1: oklch(0.64 0.23 350);
+  --chart-2: oklch(0.98 0.008 300);
+  --chart-3: oklch(0.6 0.14 220);
+  --chart-4: oklch(0.72 0.18 350);
+  --chart-5: oklch(0.55 0.1 300);
+  --sidebar: oklch(0.24 0.14 302);
+  --sidebar-foreground: oklch(0.98 0.008 300);
+  --sidebar-primary: oklch(0.17 0.09 302);
+  --sidebar-primary-foreground: oklch(0.98 0.008 300);
+  --sidebar-accent: oklch(0.36 0.11 302);
+  --sidebar-accent-foreground: oklch(0.98 0.008 300);
+  --sidebar-border: oklch(0.98 0 0 / 14%);
+  --sidebar-ring: oklch(0.64 0.23 350);
 
-  --gradient-hero: radial-gradient(
-      120% 90% at 15% 0%,
-      oklch(0.45 0.22 300 / 0.85),
-      transparent 60%
-    ),
-    linear-gradient(160deg, oklch(0.2 0.08 300), oklch(0.14 0.05 300));
-  --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-glow));
-  --shadow-elegant: 0 24px 60px -24px oklch(0.55 0.24 300 / 0.55);
-  --shadow-card: 0 12px 32px -18px oklch(0 0 0 / 0.7);
-}
-
-
-.dark {
-  color-scheme: dark;
+  --gradient-primary: var(--accent);
+  --shadow-elegant: 0 28px 65px -26px oklch(0.64 0.23 350 / 0.45);
+  --shadow-card: 0 10px 26px -16px oklch(0.08 0.05 302 / 0.55);
 }
 
 @utility bg-gradient-hero {
-  background-image: var(--gradient-hero);
+  background-color: var(--background);
 }
 
 @utility bg-gradient-primary {
-  background-image: var(--gradient-primary);
+  background-color: var(--accent);
 }
 
 @utility shadow-elegant {
@@ -137,14 +133,47 @@
   perspective: 1000px;
 }
 
+/* Halftone dot screen — the site's one recurring structural motif, lifted
+   straight from the halftone tool itself rather than a generic texture.
+   color-mix keeps the dot tint locked to the current foreground/background
+   pairing instead of a hardcoded value, so it stays correct if the palette
+   is retuned. */
+@utility bg-halftone {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--foreground) 12%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-size: 13px 13px;
+}
+
+@utility bg-halftone-accent {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--primary-foreground) 12%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-size: 13px 13px;
+}
+
 @keyframes float-slow {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-30px) translateX(15px); }
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-30px) translateX(15px);
+  }
 }
 
 @keyframes float-medium {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(20px) translateX(-20px); }
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(20px) translateX(-20px);
+  }
 }
 
 @utility animate-float-slow {
@@ -153,6 +182,53 @@
 
 @utility animate-float-medium {
   animation: float-medium 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+}
+
+@utility animate-pulse-glow {
+  animation: pulse-glow 7s ease-in-out infinite;
+}
+
+/*
+ * Die-cut corner shapes — a chamfered, laser-cut-sticker silhouette used on
+ * the hero's interactive elements. On-brief for a print/DTF shop in a way a
+ * plain rounded-rect button isn't: it reads as a cut piece of material.
+ */
+@utility clip-cut {
+  clip-path: polygon(
+    14px 0%,
+    calc(100% - 14px) 0%,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0% calc(100% - 14px),
+    0% 14px
+  );
+}
+
+@utility clip-cut-sm {
+  clip-path: polygon(
+    9px 0%,
+    calc(100% - 9px) 0%,
+    100% 9px,
+    100% calc(100% - 9px),
+    calc(100% - 9px) 100%,
+    9px 100%,
+    0% calc(100% - 9px),
+    0% 9px
+  );
 }
 
 @layer base {
@@ -165,4 +241,3 @@
     color: var(--color-foreground);
   }
 }
-

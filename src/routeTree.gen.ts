@@ -10,33 +10,142 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FerramentasArquivoDtfRouteImport } from './routes/ferramentas.arquivo-dtf'
+import { Route as FerramentasContracaoDeBordasRouteImport } from './routes/ferramentas.contracao-de-bordas'
+import { Route as FerramentasCorSpotRouteImport } from './routes/ferramentas.cor-spot'
+import { Route as FerramentasHalftoneRouteImport } from './routes/ferramentas.halftone'
+import { Route as FerramentasMockupRouteImport } from './routes/ferramentas.mockup'
+import { Route as FerramentasMoldurasRouteImport } from './routes/ferramentas.molduras'
+import { Route as FerramentasRemoverFundoRouteImport } from './routes/ferramentas.remover-fundo'
+import { Route as FerramentasVetorizarRouteImport } from './routes/ferramentas.vetorizar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FerramentasArquivoDtfRoute = FerramentasArquivoDtfRouteImport.update({
+  id: '/ferramentas/arquivo-dtf',
+  path: '/ferramentas/arquivo-dtf',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FerramentasContracaoDeBordasRoute =
+  FerramentasContracaoDeBordasRouteImport.update({
+    id: '/ferramentas/contracao-de-bordas',
+    path: '/ferramentas/contracao-de-bordas',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FerramentasCorSpotRoute = FerramentasCorSpotRouteImport.update({
+  id: '/ferramentas/cor-spot',
+  path: '/ferramentas/cor-spot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FerramentasHalftoneRoute = FerramentasHalftoneRouteImport.update({
+  id: '/ferramentas/halftone',
+  path: '/ferramentas/halftone',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FerramentasMockupRoute = FerramentasMockupRouteImport.update({
+  id: '/ferramentas/mockup',
+  path: '/ferramentas/mockup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FerramentasMoldurasRoute = FerramentasMoldurasRouteImport.update({
+  id: '/ferramentas/molduras',
+  path: '/ferramentas/molduras',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FerramentasRemoverFundoRoute = FerramentasRemoverFundoRouteImport.update({
+  id: '/ferramentas/remover-fundo',
+  path: '/ferramentas/remover-fundo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FerramentasVetorizarRoute = FerramentasVetorizarRouteImport.update({
+  id: '/ferramentas/vetorizar',
+  path: '/ferramentas/vetorizar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ferramentas/arquivo-dtf': typeof FerramentasArquivoDtfRoute
+  '/ferramentas/contracao-de-bordas': typeof FerramentasContracaoDeBordasRoute
+  '/ferramentas/cor-spot': typeof FerramentasCorSpotRoute
+  '/ferramentas/halftone': typeof FerramentasHalftoneRoute
+  '/ferramentas/mockup': typeof FerramentasMockupRoute
+  '/ferramentas/molduras': typeof FerramentasMoldurasRoute
+  '/ferramentas/remover-fundo': typeof FerramentasRemoverFundoRoute
+  '/ferramentas/vetorizar': typeof FerramentasVetorizarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ferramentas/arquivo-dtf': typeof FerramentasArquivoDtfRoute
+  '/ferramentas/contracao-de-bordas': typeof FerramentasContracaoDeBordasRoute
+  '/ferramentas/cor-spot': typeof FerramentasCorSpotRoute
+  '/ferramentas/halftone': typeof FerramentasHalftoneRoute
+  '/ferramentas/mockup': typeof FerramentasMockupRoute
+  '/ferramentas/molduras': typeof FerramentasMoldurasRoute
+  '/ferramentas/remover-fundo': typeof FerramentasRemoverFundoRoute
+  '/ferramentas/vetorizar': typeof FerramentasVetorizarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ferramentas/arquivo-dtf': typeof FerramentasArquivoDtfRoute
+  '/ferramentas/contracao-de-bordas': typeof FerramentasContracaoDeBordasRoute
+  '/ferramentas/cor-spot': typeof FerramentasCorSpotRoute
+  '/ferramentas/halftone': typeof FerramentasHalftoneRoute
+  '/ferramentas/mockup': typeof FerramentasMockupRoute
+  '/ferramentas/molduras': typeof FerramentasMoldurasRoute
+  '/ferramentas/remover-fundo': typeof FerramentasRemoverFundoRoute
+  '/ferramentas/vetorizar': typeof FerramentasVetorizarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/ferramentas/arquivo-dtf'
+    | '/ferramentas/contracao-de-bordas'
+    | '/ferramentas/cor-spot'
+    | '/ferramentas/halftone'
+    | '/ferramentas/mockup'
+    | '/ferramentas/molduras'
+    | '/ferramentas/remover-fundo'
+    | '/ferramentas/vetorizar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/ferramentas/arquivo-dtf'
+    | '/ferramentas/contracao-de-bordas'
+    | '/ferramentas/cor-spot'
+    | '/ferramentas/halftone'
+    | '/ferramentas/mockup'
+    | '/ferramentas/molduras'
+    | '/ferramentas/remover-fundo'
+    | '/ferramentas/vetorizar'
+  id:
+    | '__root__'
+    | '/'
+    | '/ferramentas/arquivo-dtf'
+    | '/ferramentas/contracao-de-bordas'
+    | '/ferramentas/cor-spot'
+    | '/ferramentas/halftone'
+    | '/ferramentas/mockup'
+    | '/ferramentas/molduras'
+    | '/ferramentas/remover-fundo'
+    | '/ferramentas/vetorizar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FerramentasArquivoDtfRoute: typeof FerramentasArquivoDtfRoute
+  FerramentasContracaoDeBordasRoute: typeof FerramentasContracaoDeBordasRoute
+  FerramentasCorSpotRoute: typeof FerramentasCorSpotRoute
+  FerramentasHalftoneRoute: typeof FerramentasHalftoneRoute
+  FerramentasMockupRoute: typeof FerramentasMockupRoute
+  FerramentasMoldurasRoute: typeof FerramentasMoldurasRoute
+  FerramentasRemoverFundoRoute: typeof FerramentasRemoverFundoRoute
+  FerramentasVetorizarRoute: typeof FerramentasVetorizarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +157,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ferramentas/arquivo-dtf': {
+      id: '/ferramentas/arquivo-dtf'
+      path: '/ferramentas/arquivo-dtf'
+      fullPath: '/ferramentas/arquivo-dtf'
+      preLoaderRoute: typeof FerramentasArquivoDtfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/contracao-de-bordas': {
+      id: '/ferramentas/contracao-de-bordas'
+      path: '/ferramentas/contracao-de-bordas'
+      fullPath: '/ferramentas/contracao-de-bordas'
+      preLoaderRoute: typeof FerramentasContracaoDeBordasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/cor-spot': {
+      id: '/ferramentas/cor-spot'
+      path: '/ferramentas/cor-spot'
+      fullPath: '/ferramentas/cor-spot'
+      preLoaderRoute: typeof FerramentasCorSpotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/halftone': {
+      id: '/ferramentas/halftone'
+      path: '/ferramentas/halftone'
+      fullPath: '/ferramentas/halftone'
+      preLoaderRoute: typeof FerramentasHalftoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/mockup': {
+      id: '/ferramentas/mockup'
+      path: '/ferramentas/mockup'
+      fullPath: '/ferramentas/mockup'
+      preLoaderRoute: typeof FerramentasMockupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/molduras': {
+      id: '/ferramentas/molduras'
+      path: '/ferramentas/molduras'
+      fullPath: '/ferramentas/molduras'
+      preLoaderRoute: typeof FerramentasMoldurasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/remover-fundo': {
+      id: '/ferramentas/remover-fundo'
+      path: '/ferramentas/remover-fundo'
+      fullPath: '/ferramentas/remover-fundo'
+      preLoaderRoute: typeof FerramentasRemoverFundoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/vetorizar': {
+      id: '/ferramentas/vetorizar'
+      path: '/ferramentas/vetorizar'
+      fullPath: '/ferramentas/vetorizar'
+      preLoaderRoute: typeof FerramentasVetorizarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FerramentasArquivoDtfRoute: FerramentasArquivoDtfRoute,
+  FerramentasContracaoDeBordasRoute: FerramentasContracaoDeBordasRoute,
+  FerramentasCorSpotRoute: FerramentasCorSpotRoute,
+  FerramentasHalftoneRoute: FerramentasHalftoneRoute,
+  FerramentasMockupRoute: FerramentasMockupRoute,
+  FerramentasMoldurasRoute: FerramentasMoldurasRoute,
+  FerramentasRemoverFundoRoute: FerramentasRemoverFundoRoute,
+  FerramentasVetorizarRoute: FerramentasVetorizarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
