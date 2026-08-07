@@ -38,14 +38,14 @@ export const Route = createFileRoute("/")({
 });
 
 const tools = [
-  { tag: "PRO", icon: "⠿", name: "Halftone DTF/DTG", desc: "Retículas nítidas que economizam tinta e mantêm a qualidade da estampa." },
-  { tag: "GRÁTIS", icon: "◒", name: "Removedor de Fundo", desc: "Fundo limpo em segundos sem estragar bordas finas ou detalhes." },
-  { tag: "NOVO", icon: "◇", name: "Vetorizador PRO", desc: "Transforme imagens em SVG escalável e pronto para produção em alta resolução." },
-  { tag: "NOVO", icon: "▣", name: "Mockup Studio", desc: "Apresente estampas em camisetas reais e venda mais antes de imprimir." },
-  { tag: "PRO", icon: "⌗", name: "Molduras PRO", desc: "Bordas corridas, efeitos grunge e acabamentos que valorizam o produto final." },
-  { tag: "PRO", icon: "◎", name: "Cor Spot PRO", desc: "Separe cores especiais com precisão e reduza erros na impressão." },
-  { tag: "PRO", icon: "↘", name: "Contração de Bordas", desc: "Elimine halos brancos e acabamentos feios no processo de transfer." },
-  { tag: "GRÁTIS", icon: "⬒", name: "Arquivo DTF", desc: "Monte folhas DTF otimizadas com medidas, régua e exportação rápida." },
+  { tag: "PRO", icon: "⠿", name: "Halftone DTF/DTG", desc: "Retícula calibrada para sua máquina: menos tinta por peça e traço limpo na prensa." },
+  { tag: "GRÁTIS", icon: "◒", name: "Limpador de Fundo", desc: "Arte do cliente chega com fundo sujo e sai recortada, sem retrabalho do setor de arte." },
+  { tag: "NOVO", icon: "◇", name: "Vetorizador PRO", desc: "Logo em JPG vira vetor imprimível em qualquer formato, do adesivo ao banner." },
+  { tag: "NOVO", icon: "▣", name: "Mockup Studio", desc: "Aprove a arte com o cliente antes de rodar e evite reimpressão por engano." },
+  { tag: "PRO", icon: "⌗", name: "Molduras PRO", desc: "Acabamentos e bordas prontos para agregar valor ao pedido sem hora extra de criação." },
+  { tag: "PRO", icon: "◎", name: "Cor Spot PRO", desc: "Separação de cores especiais com precisão para fechar o job certo na primeira tiragem." },
+  { tag: "PRO", icon: "↘", name: "Contração de Bordas", desc: "Fim do halo branco no transfer: acabamento de gráfica profissional em toda peça." },
+  { tag: "GRÁTIS", icon: "⬒", name: "Arquivo DTF", desc: "Monte a folha com encaixe otimizado, régua e sangria — aproveite cada metro de filme." },
 ];
 
 const examples = [
