@@ -123,7 +123,7 @@ export function Hero() {
                   <Plus className="h-8 w-8" />
                 </span>
                 <p className="text-sm text-muted-foreground">
-                  Arraste sua estampa aqui para começar
+                  Envie o arquivo do cliente e receba a arte pronta para impressão
                 </p>
               </div>
             </div>
