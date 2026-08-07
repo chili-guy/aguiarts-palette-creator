@@ -18,17 +18,17 @@ import { Hero } from "@/components/hero";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Printzy Studio | Prepare artes DTF/DTG em minutos" },
+      { title: "Printzy | Serviços de pré-impressão para gráficas" },
       {
         name: "description",
         content:
-          "Ganhe velocidade na produção de DTF e DTG: halftone, remoção de fundo, vetorização, mockups e exportação profissional — tudo no navegador.",
+          "Serviços digitais para gráficas: tratamento de arte, halftone, vetorização, remoção de fundo, mockups e montagem de folha DTF prontos para produção.",
       },
-      { property: "og:title", content: "Printzy Studio | Prepare artes DTF/DTG em minutos" },
+      { property: "og:title", content: "Printzy | Serviços de pré-impressão para gráficas" },
       {
         property: "og:description",
         content:
-          "Halftone, vetor, mockups, fundo, bordas, spot e mais: produza arquivos prontos para impressão sem instalar nada.",
+          "Sua gráfica entrega mais pedidos por dia: arte tratada, vetorizada e encaixada na folha DTF sem gargalo no setor de criação.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
