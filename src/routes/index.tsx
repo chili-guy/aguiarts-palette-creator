@@ -345,10 +345,10 @@ function Index() {
         <section className="mx-auto max-w-6xl px-5 pb-20">
           <div className="rounded-3xl bg-gradient-hero p-10 text-center shadow-elegant md:p-16">
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Pronto para acelerar sua produção?
+              Tire o gargalo de arte da sua gráfica
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Crie sua conta grátis e veja como é rápido preparar arquivos DTF e DTG com a Printzy.
+              Crie sua conta grátis e trate o próximo pedido do cliente em minutos, pronto para a máquina.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
