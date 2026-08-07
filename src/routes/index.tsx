@@ -18,17 +18,17 @@ import { Hero } from "@/components/hero";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Printzy Studio | Prepare artes DTF/DTG em minutos" },
+      { title: "Printzy | Serviços de pré-impressão para gráficas" },
       {
         name: "description",
         content:
-          "Ganhe velocidade na produção de DTF e DTG: halftone, remoção de fundo, vetorização, mockups e exportação profissional — tudo no navegador.",
+          "Serviços digitais para gráficas: tratamento de arte, halftone, vetorização, remoção de fundo, mockups e montagem de folha DTF prontos para produção.",
       },
-      { property: "og:title", content: "Printzy Studio | Prepare artes DTF/DTG em minutos" },
+      { property: "og:title", content: "Printzy | Serviços de pré-impressão para gráficas" },
       {
         property: "og:description",
         content:
-          "Halftone, vetor, mockups, fundo, bordas, spot e mais: produza arquivos prontos para impressão sem instalar nada.",
+          "Sua gráfica entrega mais pedidos por dia: arte tratada, vetorizada e encaixada na folha DTF sem gargalo no setor de criação.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -38,30 +38,30 @@ export const Route = createFileRoute("/")({
 });
 
 const tools = [
-  { tag: "PRO", icon: "⠿", name: "Halftone DTF/DTG", desc: "Retículas nítidas que economizam tinta e mantêm a qualidade da estampa." },
-  { tag: "GRÁTIS", icon: "◒", name: "Removedor de Fundo", desc: "Fundo limpo em segundos sem estragar bordas finas ou detalhes." },
-  { tag: "NOVO", icon: "◇", name: "Vetorizador PRO", desc: "Transforme imagens em SVG escalável e pronto para produção em alta resolução." },
-  { tag: "NOVO", icon: "▣", name: "Mockup Studio", desc: "Apresente estampas em camisetas reais e venda mais antes de imprimir." },
-  { tag: "PRO", icon: "⌗", name: "Molduras PRO", desc: "Bordas corridas, efeitos grunge e acabamentos que valorizam o produto final." },
-  { tag: "PRO", icon: "◎", name: "Cor Spot PRO", desc: "Separe cores especiais com precisão e reduza erros na impressão." },
-  { tag: "PRO", icon: "↘", name: "Contração de Bordas", desc: "Elimine halos brancos e acabamentos feios no processo de transfer." },
-  { tag: "GRÁTIS", icon: "⬒", name: "Arquivo DTF", desc: "Monte folhas DTF otimizadas com medidas, régua e exportação rápida." },
+  { tag: "PRO", icon: "⠿", name: "Halftone DTF/DTG", desc: "Retícula calibrada para sua máquina: menos tinta por peça e traço limpo na prensa." },
+  { tag: "GRÁTIS", icon: "◒", name: "Limpador de Fundo", desc: "Arte do cliente chega com fundo sujo e sai recortada, sem retrabalho do setor de arte." },
+  { tag: "NOVO", icon: "◇", name: "Vetorizador PRO", desc: "Logo em JPG vira vetor imprimível em qualquer formato, do adesivo ao banner." },
+  { tag: "NOVO", icon: "▣", name: "Mockup Studio", desc: "Aprove a arte com o cliente antes de rodar e evite reimpressão por engano." },
+  { tag: "PRO", icon: "⌗", name: "Molduras PRO", desc: "Acabamentos e bordas prontos para agregar valor ao pedido sem hora extra de criação." },
+  { tag: "PRO", icon: "◎", name: "Cor Spot PRO", desc: "Separação de cores especiais com precisão para fechar o job certo na primeira tiragem." },
+  { tag: "PRO", icon: "↘", name: "Contração de Bordas", desc: "Fim do halo branco no transfer: acabamento de gráfica profissional em toda peça." },
+  { tag: "GRÁTIS", icon: "⬒", name: "Arquivo DTF", desc: "Monte a folha com encaixe otimizado, régua e sangria — aproveite cada metro de filme." },
 ];
 
 const examples = [
   {
     name: "Halftone DTF/DTG",
     tag: "PRO",
-    desc: "A arte cheia vira retícula calibrada, com menos tinta e traço limpo na prensa.",
+    desc: "A arte do cliente vira retícula calibrada: menos consumo de tinta por tiragem.",
     before: exHalftoneBefore,
     after: exHalftoneAfter,
     beforeAlt: "Ilustração de lobo geométrico colorida antes do halftone",
     afterAlt: "Mesma ilustração convertida em retícula halftone pronta para impressão",
   },
   {
-    name: "Removedor de Fundo",
+    name: "Limpador de Fundo",
     tag: "GRÁTIS",
-    desc: "Recorte automático com bordas preservadas, pronto para mockup ou catálogo.",
+    desc: "Recorte pronto para catálogo, mockup e impressão sem passar pelo designer.",
     before: exBgBefore,
     after: exBgAfter,
     beforeAlt: "Foto de pessoa com fundo bagunçado antes da remoção",
@@ -71,7 +71,7 @@ const examples = [
   {
     name: "Vetorizador PRO",
     tag: "NOVO",
-    desc: "Logo pixelado vira vetor nítido, escalável em qualquer tamanho de estampa.",
+    desc: "Logo em baixa resolução vira vetor pronto para qualquer formato de impressão.",
     before: exVectorBefore,
     after: exVectorAfter,
     beforeAlt: "Logo de foguete pixelado e borrado antes da vetorização",
@@ -80,7 +80,7 @@ const examples = [
   {
     name: "Mockup Studio",
     tag: "NOVO",
-    desc: "Sua arte aplicada em peça real para aprovar com o cliente antes de imprimir.",
+    desc: "Prova visual para o cliente aprovar antes de a gráfica rodar o pedido.",
     before: exMockupBefore,
     after: exMockupAfter,
     beforeAlt: "Arte de foguete isolada em fundo branco",
@@ -89,7 +89,7 @@ const examples = [
   {
     name: "Molduras PRO",
     tag: "PRO",
-    desc: "Arte simples ganha moldura grunge e acabamento que valoriza a peça.",
+    desc: "Acabamento que agrega valor ao pedido sem tempo extra no setor de criação.",
     before: exFrameBefore,
     after: exFrameAfter,
     beforeAlt: "Ilustração de caveira com asas sem moldura",
@@ -98,7 +98,7 @@ const examples = [
   {
     name: "Arquivo DTF",
     tag: "GRÁTIS",
-    desc: "Artes espalhadas viram folha DTF encaixada, com régua e zero desperdício de filme.",
+    desc: "Vários pedidos encaixados na mesma folha: mais peças por metro de filme.",
     before: exDtfBefore,
     after: exDtfAfter,
     beforeAlt: "Artes espalhadas na folha com muito espaço vazio",
@@ -107,10 +107,10 @@ const examples = [
 ];
 
 const benefits = [
-  { kicker: "MAIS VELOCIDADE", title: "Arte pronta em minutos", desc: "Pare de perder tempo com programas pesados. Suba, ajuste e exporte direto no navegador." },
-  { kicker: "MENOS RETRABALHO", title: "Arquivos que saem certo", desc: "Ferramentas calibradas para DTF e DTG reduzem erros de impressão e desperdício." },
-  { kicker: "EXPORTS ILIMITADOS", title: "Produção sem travar", desc: "Plano PRO libera downloads ilimitados para você produzir o quanto precisar." },
-  { kicker: "TUDO EM UM LUGAR", title: "Um fluxo só, do início ao fim", desc: "Halftone, vetor, mockup, fundo, bordas e spot — sem trocar de aplicativo." },
+  { kicker: "MAIS PEDIDOS/DIA", title: "Fila de arte destravada", desc: "O que travava no setor de criação sai pronto em minutos, direto do navegador." },
+  { kicker: "MENOS REFUGO", title: "Arquivo certo na primeira tiragem", desc: "Perfis calibrados para DTF e DTG reduzem reimpressão, desperdício de filme e tinta." },
+  { kicker: "SEM LIMITE", title: "Volume de gráfica de verdade", desc: "No plano PRO sua equipe exporta quantos jobs precisar, todos os dias." },
+  { kicker: "UM FLUXO SÓ", title: "Do orçamento à folha final", desc: "Tratamento, vetor, mockup, molduras e montagem DTF sem trocar de software." },
 ];
 
 const plans = [
@@ -118,7 +118,7 @@ const plans = [
     name: "Grátis",
     price: "R$ 0",
     period: "/ mês",
-    desc: "Teste a plataforma e já prepare suas primeiras artes.",
+    desc: "Para a gráfica testar o fluxo com os primeiros pedidos.",
     items: ["Ferramentas grátis liberadas", "5 exports PRO por mês", "Conta Printzy gratuita"],
     cta: "Criar conta grátis",
     featured: false,
@@ -127,7 +127,7 @@ const plans = [
     name: "Mensal PRO",
     price: "R$ 19,90",
     period: "/ mês",
-    desc: "O plano ideal para quem produz todo dia e quer resultado profissional.",
+    desc: "Para gráficas com produção diária e prazo apertado.",
     items: ["Exports PRO ilimitados", "Todas as ferramentas premium", "Atualizações incluídas", "Suporte prioritário"],
     cta: "Assinar agora",
     featured: true,
@@ -136,7 +136,7 @@ const plans = [
     name: "Anual PRO",
     price: "R$ 127",
     period: "/ ano",
-    desc: "Melhor custo para quem quer produzir o ano inteiro pagando menos.",
+    desc: "O menor custo por pedido para quem produz o ano inteiro.",
     items: ["Exports PRO ilimitados", "Melhor custo-benefício", "Atualizações incluídas", "Acesso anual completo"],
     cta: "Economizar no anual",
     featured: false,
@@ -144,10 +144,11 @@ const plans = [
 ];
 
 const faqs = [
-  { q: "Preciso instalar algum programa?", a: "Não. Tudo funciona no navegador do computador. Basta criar uma conta e começar." },
-  { q: "Funciona para DTF e DTG?", a: "Sim. As ferramentas foram calibradas para os dois fluxos, com exports prontos para produção." },
-  { q: "Qual a diferença do grátis para o PRO?", a: "O grátis libera ferramentas básicas e 5 exports PRO. O PRO libera tudo, com downloads ilimitados." },
-  { q: "Posso cancelar a assinatura quando quiser?", a: "Sim. O plano mensal pode ser cancelado a qualquer momento. O anual garante o melhor preço." },
+  { q: "Preciso instalar algum programa na gráfica?", a: "Não. Tudo roda no navegador de qualquer computador do setor de arte. Basta criar uma conta." },
+  { q: "Atende DTF, DTG e serigrafia?", a: "Sim. As ferramentas foram calibradas para esses fluxos, com exports prontos para o RIP e para a prensa." },
+  { q: "Mais de uma pessoa pode usar?", a: "Sim. A equipe do setor de arte pode trabalhar na mesma conta PRO, com exports ilimitados." },
+  { q: "Qual a diferença do grátis para o PRO?", a: "O grátis libera as ferramentas básicas e 5 exports PRO. O PRO libera tudo, com downloads ilimitados." },
+  { q: "Posso cancelar quando quiser?", a: "Sim. O mensal pode ser cancelado a qualquer momento e o anual garante o melhor preço." },
 ];
 
 function Logo() {
@@ -192,10 +193,10 @@ function Index() {
         {/* Benefícios */}
         <section className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Menos etapa. Mais produção. Menos dor de cabeça.
+            Sua gráfica entrega mais, com menos refugo
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            A Printzy foi feita para quem vive de estampa. Cada ferramenta resolve um problema real do dia a dia da produção.
+            A Printzy resolve a etapa que mais atrasa pedido: o tratamento do arquivo que o cliente manda.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {benefits.map((b) => (
@@ -212,10 +213,10 @@ function Index() {
         <section id="ferramentas" className="border-y border-border bg-card/40">
           <div className="mx-auto max-w-6xl px-5 py-20">
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Tudo que você precisa para entregar arte pronta
+              Serviços para cada etapa da sua produção gráfica
             </h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              Do arquivo bruto ao arquivo final. Uma ferramenta para cada etapa do fluxo DTF/DTG.
+              Do arquivo que o cliente envia até a folha fechada para o RIP — sem depender de software caro na bancada.
             </p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {tools.map((t) => (
@@ -240,11 +241,11 @@ function Index() {
         {/* Exemplos antes e depois */}
         <section id="exemplos" className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Veja o antes e o depois de cada ferramenta
+            O arquivo que chega x o arquivo que vai para a máquina
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Arraste o cursor em cada exemplo e compare o arquivo bruto com o resultado
-            que sai pronto da Printzy.
+            Arraste o cursor e compare: de um lado o material bruto do cliente, do
+            outro o arquivo tratado e pronto para produção.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {examples.map((ex) => (
@@ -276,10 +277,10 @@ function Index() {
         {/* Planos */}
         <section id="planos" className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Escolha seu plano e comece a produzir hoje
+            Planos que cabem no volume da sua gráfica
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Comece de graça. Quando sua produção crescer, o PRO libera tudo sem limite de exports.
+            Comece de graça e teste com os próximos pedidos. Quando o volume crescer, o PRO libera exports ilimitados.
           </p>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {plans.map((p) => (
@@ -344,10 +345,10 @@ function Index() {
         <section className="mx-auto max-w-6xl px-5 pb-20">
           <div className="rounded-3xl bg-gradient-hero p-10 text-center shadow-elegant md:p-16">
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Pronto para acelerar sua produção?
+              Tire o gargalo de arte da sua gráfica
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Crie sua conta grátis e veja como é rápido preparar arquivos DTF e DTG com a Printzy.
+              Crie sua conta grátis e trate o próximo pedido do cliente em minutos, pronto para a máquina.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
