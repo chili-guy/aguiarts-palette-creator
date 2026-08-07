@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles, ArrowRight, Check, Wand2, Layers, Scissors } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroSpaceBg from "@/assets/hero-space-bg.jpg";
 import heroFilm from "@/assets/hero-film.png";
 
 const proofs = [
