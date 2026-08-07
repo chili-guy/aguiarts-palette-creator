@@ -157,7 +157,7 @@ export function Hero() {
                     ...baseTransition,
                     delay: 0.4 + i * 0.06,
                   }}
-                  whileHover={reduceMotion ? undefined : { scale: 1.03, y: -2 }}
+                  {...(reduceMotion ? {} : { whileHover: { scale: 1.03, y: -2 } })}
                   className={`group flex cursor-default items-center gap-3 rounded-xl ${t.color} p-3 transition-colors`}
                 >
                   <span className="text-xl">{t.icon}</span>
@@ -197,7 +197,7 @@ export function Hero() {
 
             {/* Floating status badge */}
             <motion.div
-              animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
+              {...(reduceMotion ? {} : { animate: { y: [0, -6, 0] } })}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -right-3 -top-3 rounded-2xl border border-border bg-card px-3 py-2 shadow-card"
             >
