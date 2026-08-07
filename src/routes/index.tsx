@@ -52,7 +52,7 @@ const examples = [
   {
     name: "Halftone DTF/DTG",
     tag: "PRO",
-    desc: "A arte cheia vira retícula calibrada, com menos tinta e traço limpo na prensa.",
+    desc: "A arte do cliente vira retícula calibrada: menos consumo de tinta por tiragem.",
     before: exHalftoneBefore,
     after: exHalftoneAfter,
     beforeAlt: "Ilustração de lobo geométrico colorida antes do halftone",
