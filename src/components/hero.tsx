@@ -9,7 +9,7 @@ import {
   Plus,
   ArrowRight,
 } from "lucide-react";
-import heroBg from "@/assets/hero-bg-final.jpg.asset.json";
+import heroBg from "@/assets/hero-bg-final.jpg";
 
 
 const tools = [
@@ -45,7 +45,7 @@ export function Hero() {
   return (
     <section
       className="relative isolate flex w-full items-center justify-center overflow-hidden bg-background px-6 py-20 sm:py-24"
-      style={{ backgroundImage: `url(${heroBg.url})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      style={{ backgroundImage: `url(${heroBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
     >
       <div className="absolute inset-0 bg-background/75" />
 
