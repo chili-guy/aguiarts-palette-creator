@@ -124,123 +124,142 @@ export function Hero() {
           </motion.ul>
         </motion.div>
 
-        {/* Visual column */}
+        {/* Visual column — mockup do sistema */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...baseTransition, duration: reduceMotion ? 0 : 0.9, delay: 0.15 }}
-          className="relative mx-auto w-full max-w-md"
+          className="relative mx-auto w-full max-w-xl"
         >
-          {/* Solar system decoration */}
-          <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center" aria-hidden="true">
-            <svg viewBox="0 0 400 400" className="h-[140%] w-[140%] opacity-80">
-              <defs>
-                <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="hsl(var(--primary-glow))" stopOpacity="0.9" />
-                  <stop offset="45%" stopColor="hsl(var(--accent))" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                </radialGradient>
-                <radialGradient id="planet1" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#c084fc" />
-                  <stop offset="100%" stopColor="#581c87" />
-                </radialGradient>
-                <radialGradient id="planet2" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#a78bfa" />
-                  <stop offset="100%" stopColor="#3730a3" />
-                </radialGradient>
-                <radialGradient id="planet3" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#f0abfc" />
-                  <stop offset="100%" stopColor="#7e22ce" />
-                </radialGradient>
-              </defs>
-
-              {/* Orbits */}
-              <circle cx="200" cy="200" r="90" fill="none" stroke="hsl(var(--primary-glow))" strokeOpacity="0.15" strokeWidth="1" strokeDasharray="4 4" />
-              <circle cx="200" cy="200" r="140" fill="none" stroke="hsl(var(--accent))" strokeOpacity="0.12" strokeWidth="1" />
-              <ellipse cx="200" cy="200" rx="170" ry="120" fill="none" stroke="hsl(var(--primary-glow))" strokeOpacity="0.1" strokeWidth="1" strokeDasharray="8 6" />
-
-              {/* Sun behind film */}
-              <circle cx="200" cy="200" r="55" fill="url(#sunGlow)" className="animate-pulse" />
-              <circle cx="200" cy="200" r="18" fill="hsl(var(--primary-glow))" opacity="0.9" />
-
-              {/* Planet 1 */}
-              <motion.g
-                {...(reduceMotion ? {} : { animate: { rotate: 360 } })}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                style={{ transformOrigin: "200px 200px" }}
-              >
-                <circle cx="290" cy="200" r="10" fill="url(#planet1)" />
-                <circle cx="290" cy="200" r="14" fill="none" stroke="#c084fc" strokeOpacity="0.25" strokeWidth="1" />
-              </motion.g>
-
-              {/* Planet 2 */}
-              <motion.g
-                {...(reduceMotion ? {} : { animate: { rotate: -360 } })}
-                transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
-                style={{ transformOrigin: "200px 200px" }}
-              >
-                <circle cx="200" cy="340" r="14" fill="url(#planet2)" />
-                <ellipse cx="200" cy="340" rx="22" ry="6" fill="none" stroke="#a78bfa" strokeOpacity="0.3" strokeWidth="1.5" />
-              </motion.g>
-
-              {/* Planet 3 */}
-              <motion.g
-                {...(reduceMotion ? {} : { animate: { rotate: 360 } })}
-                transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-                style={{ transformOrigin: "200px 200px" }}
-              >
-                <circle cx="65" cy="200" r="8" fill="url(#planet3)" />
-              </motion.g>
-
-              {/* Stars */}
-              {[...Array(12)].map((_, i) => (
-                <circle
-                  key={i}
-                  cx={40 + (i * 31) % 320}
-                  cy={30 + (i * 47) % 340}
-                  r={1.2 + (i % 2) * 0.8}
-                  fill="white"
-                  opacity={0.4 + (i % 3) * 0.2}
-                  className="animate-pulse"
-                  style={{ animationDelay: `${i * 0.3}s`, animationDuration: `${2 + (i % 3)}s` }}
-                />
-              ))}
-            </svg>
-          </div>
+          <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-primary/25 blur-[90px]" />
 
           <motion.div
-            {...(reduceMotion ? {} : { animate: { y: [0, -12, 0] } })}
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
+            {...(reduceMotion ? {} : { animate: { y: [0, -10, 0] } })}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="relative overflow-hidden rounded-2xl border border-border bg-card/90 shadow-elegant backdrop-blur-xl"
           >
-            <div className="absolute inset-6 -z-10 rounded-full bg-primary/30 blur-[90px]" />
-            <img
-              src={heroFilm}
-              alt="Filme de transfer DTF transparente com estampa geométrica de astronauta em roxo e dourado"
-              width={1024}
-              height={1024}
-              className="relative z-10 w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)]"
-            />
+            {/* Title bar */}
+            <div className="flex items-center gap-3 border-b border-border/70 bg-secondary/40 px-4 py-2.5">
+              <div className="flex gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
+                <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
+              </div>
+              <span className="truncate text-xs font-medium text-muted-foreground">
+                printzy.studio — estampa-astronauta.png
+              </span>
+              <span className="ml-auto hidden items-center gap-1.5 rounded-full bg-primary/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-glow sm:inline-flex">
+                <Sparkles className="h-3 w-3" /> PRO
+              </span>
+            </div>
+
+            <div className="flex">
+              {/* Toolbar */}
+              <div className="hidden flex-col gap-1.5 border-r border-border/70 bg-secondary/20 p-2 sm:flex">
+                {[Wand2, Scissors, Layers, Sparkles].map((Icon, i) => (
+                  <span
+                    key={i}
+                    className={`grid h-9 w-9 place-items-center rounded-xl ${
+                      i === 0
+                        ? "bg-gradient-primary text-primary-foreground shadow-card"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </span>
+                ))}
+              </div>
+
+              {/* Canvas */}
+              <div className="relative min-w-0 flex-1 p-4">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border/70 bg-[repeating-conic-gradient(color-mix(in_oklab,var(--foreground)_8%,transparent)_0%_25%,transparent_0%_50%)] bg-[length:16px_16px]">
+                  <img
+                    src={heroFilm}
+                    alt="Prévia do editor Printzy aplicando halftone em uma estampa de astronauta geométrico"
+                    width={1024}
+                    height={1024}
+                    className="absolute inset-0 h-full w-full object-contain p-3"
+                  />
+                  {/* Halftone processing overlay */}
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,color-mix(in_oklab,var(--primary-glow)_55%,transparent)_1px,transparent_1.6px)] bg-[length:7px_7px] opacity-40 mix-blend-screen" />
+                  {/* Scan line */}
+                  <motion.div
+                    {...(reduceMotion ? {} : { animate: { y: ["-10%", "110%"] } })}
+                    transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-x-0 top-0 h-16 bg-[linear-gradient(to_bottom,transparent,color-mix(in_oklab,var(--primary-glow)_35%,transparent),transparent)]"
+                  />
+                  {/* Selection frame */}
+                  <div className="pointer-events-none absolute inset-4 rounded-lg border border-dashed border-primary-glow/45" />
+                  <span className="absolute left-4 top-4 rounded-md bg-background/75 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-glow backdrop-blur">
+                    Halftone • 45 LPI
+                  </span>
+                </div>
+
+                {/* Sliders / controls */}
+                <div className="mt-3 grid gap-2.5">
+                  {[
+                    { label: "Frequência", value: 72 },
+                    { label: "Ângulo", value: 45 },
+                    { label: "Contraste", value: 88 },
+                  ].map((s, i) => (
+                    <div key={s.label} className="flex items-center gap-3">
+                      <span className="w-20 shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {s.label}
+                      </span>
+                      <span className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-secondary">
+                        <motion.span
+                          initial={{ width: 0 }}
+                          animate={{ width: `${s.value}%` }}
+                          transition={{ duration: reduceMotion ? 0 : 1.1, delay: 0.5 + i * 0.12, ease: "easeOut" }}
+                          className="absolute inset-y-0 left-0 rounded-full bg-gradient-primary"
+                        />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Layers panel */}
+              <div className="hidden w-32 flex-col gap-2 border-l border-border/70 bg-secondary/20 p-3 lg:flex">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Camadas
+                </span>
+                {["Halftone", "Traço", "Fundo removido"].map((l, i) => (
+                  <span
+                    key={l}
+                    className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] ${
+                      i === 0 ? "bg-primary/15 text-foreground" : "text-muted-foreground"
+                    }`}
+                  >
+                    <span className="h-2 w-2 shrink-0 rounded-sm bg-primary-glow/70" />
+                    <span className="truncate">{l}</span>
+                  </span>
+                ))}
+                <div className="mt-auto rounded-lg bg-gradient-primary px-2 py-2 text-center text-[10px] font-bold text-primary-foreground">
+                  Exportar
+                </div>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Floating stat cards */}
+          {/* Floating status cards */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ ...baseTransition, delay: 0.5 }}
-            className="absolute -left-2 top-6 z-20 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-left-8"
+            transition={{ ...baseTransition, delay: 0.55 }}
+            className="absolute -left-3 top-24 z-20 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-card backdrop-blur-md md:-left-8"
           >
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Halftone
+              Processado em
             </div>
-            <div className="mt-0.5 font-display text-lg font-bold">45 LPI • 22°</div>
+            <div className="mt-0.5 font-display text-lg font-bold">2,4s</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ ...baseTransition, delay: 0.65 }}
-            className="absolute -right-2 bottom-8 z-20 rounded-2xl border border-border bg-card/85 px-4 py-3 shadow-card backdrop-blur-md md:-right-6"
+            transition={{ ...baseTransition, delay: 0.7 }}
+            className="absolute -right-3 -bottom-5 z-20 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-card backdrop-blur-md md:-right-6"
           >
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -258,6 +277,7 @@ export function Hero() {
             </div>
           </motion.div>
         </motion.div>
+
       </div>
     </section>
   );
