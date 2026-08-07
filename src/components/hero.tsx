@@ -43,8 +43,13 @@ export function Hero() {
   };
 
   return (
-    <section className="relative isolate flex w-full items-center justify-center overflow-hidden bg-background px-6 py-20 sm:py-24">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 text-center">
+    <section
+      className="relative isolate flex w-full items-center justify-center overflow-hidden bg-background px-6 py-20 sm:py-24"
+      style={{ backgroundImage: `url(${heroBg.url})`, backgroundSize: "cover", backgroundPosition: "center" }}
+    >
+      <div className="absolute inset-0 bg-background/75" />
+
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center gap-12 text-center">
         {/* Headline */}
         <motion.div
           initial="hidden"
@@ -52,13 +57,6 @@ export function Hero() {
           variants={container}
           className="flex max-w-4xl flex-col items-center gap-6"
         >
-          <motion.span
-            variants={item}
-            className="rounded-full border border-accent/30 bg-accent/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-accent"
-          >
-            Estúdio digital profissional
-          </motion.span>
-
           <motion.h1
             variants={item}
             className="font-display text-4xl font-bold leading-[1.08] tracking-tight text-foreground md:text-6xl lg:text-7xl"
