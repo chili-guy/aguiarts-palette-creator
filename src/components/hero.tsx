@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles, ArrowRight, Check, Wand2, Layers, Scissors } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
-import heroShirt from "@/assets/hero-shirt.png";
+import heroFilm from "@/assets/hero-film.png";
 
 const proofs = [
   "Sem instalar nada",
@@ -138,8 +138,8 @@ export function Hero() {
           >
             <div className="absolute inset-6 -z-10 rounded-full bg-primary/30 blur-[90px]" />
             <img
-              src={heroShirt}
-              alt="Camiseta preta com estampa DTF de astronauta geométrico em tons de roxo e dourado"
+              src={heroFilm}
+              alt="Filme de transfer DTF transparente com estampa geométrica de astronauta em roxo e dourado"
               width={1024}
               height={1024}
               className="w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)]"
