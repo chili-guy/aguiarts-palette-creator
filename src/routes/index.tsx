@@ -71,7 +71,7 @@ const examples = [
   {
     name: "Vetorizador PRO",
     tag: "NOVO",
-    desc: "Logo pixelado vira vetor nítido, escalável em qualquer tamanho de estampa.",
+    desc: "Logo em baixa resolução vira vetor pronto para qualquer formato de impressão.",
     before: exVectorBefore,
     after: exVectorAfter,
     beforeAlt: "Logo de foguete pixelado e borrado antes da vetorização",
@@ -80,7 +80,7 @@ const examples = [
   {
     name: "Mockup Studio",
     tag: "NOVO",
-    desc: "Sua arte aplicada em peça real para aprovar com o cliente antes de imprimir.",
+    desc: "Prova visual para o cliente aprovar antes de a gráfica rodar o pedido.",
     before: exMockupBefore,
     after: exMockupAfter,
     beforeAlt: "Arte de foguete isolada em fundo branco",
@@ -89,7 +89,7 @@ const examples = [
   {
     name: "Molduras PRO",
     tag: "PRO",
-    desc: "Arte simples ganha moldura grunge e acabamento que valoriza a peça.",
+    desc: "Acabamento que agrega valor ao pedido sem tempo extra no setor de criação.",
     before: exFrameBefore,
     after: exFrameAfter,
     beforeAlt: "Ilustração de caveira com asas sem moldura",
@@ -98,7 +98,7 @@ const examples = [
   {
     name: "Arquivo DTF",
     tag: "GRÁTIS",
-    desc: "Artes espalhadas viram folha DTF encaixada, com régua e zero desperdício de filme.",
+    desc: "Vários pedidos encaixados na mesma folha: mais peças por metro de filme.",
     before: exDtfBefore,
     after: exDtfAfter,
     beforeAlt: "Artes espalhadas na folha com muito espaço vazio",
