@@ -7,6 +7,10 @@ import exVectorBefore from "@/assets/ex-vector-before.jpg";
 import exVectorAfter from "@/assets/ex-vector-after.jpg";
 import exMockupBefore from "@/assets/ex-mockup-before.jpg";
 import exMockupAfter from "@/assets/ex-mockup-after.jpg";
+import exFrameBefore from "@/assets/ex-frame-before.jpg";
+import exFrameAfter from "@/assets/ex-frame-after.jpg";
+import exDtfBefore from "@/assets/ex-dtf-before.jpg";
+import exDtfAfter from "@/assets/ex-dtf-after.jpg";
 import { createFileRoute } from "@tanstack/react-router";
 import { Hero } from "@/components/hero";
 
@@ -81,6 +85,24 @@ const examples = [
     after: exMockupAfter,
     beforeAlt: "Arte de foguete isolada em fundo branco",
     afterAlt: "Mesma arte aplicada em mockup de camiseta preta",
+  },
+  {
+    name: "Molduras PRO",
+    tag: "PRO",
+    desc: "Arte simples ganha moldura grunge e acabamento que valoriza a peça.",
+    before: exFrameBefore,
+    after: exFrameAfter,
+    beforeAlt: "Ilustração de caveira com asas sem moldura",
+    afterAlt: "Mesma ilustração com moldura circular grunge aplicada",
+  },
+  {
+    name: "Arquivo DTF",
+    tag: "GRÁTIS",
+    desc: "Artes espalhadas viram folha DTF encaixada, com régua e zero desperdício de filme.",
+    before: exDtfBefore,
+    after: exDtfAfter,
+    beforeAlt: "Artes espalhadas na folha com muito espaço vazio",
+    afterAlt: "Folha DTF com artes encaixadas em grade otimizada e régua",
   },
 ];
 
@@ -225,7 +247,7 @@ function Index() {
             Arraste o cursor em cada exemplo e compare o arquivo bruto com o resultado
             que sai pronto da Printzy.
           </p>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {examples.map((ex) => (
               <article
                 key={ex.name}
