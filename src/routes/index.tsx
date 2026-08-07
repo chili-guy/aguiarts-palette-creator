@@ -213,10 +213,10 @@ function Index() {
         <section id="ferramentas" className="border-y border-border bg-card/40">
           <div className="mx-auto max-w-6xl px-5 py-20">
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Tudo que você precisa para entregar arte pronta
+              Serviços para cada etapa da sua produção gráfica
             </h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              Do arquivo bruto ao arquivo final. Uma ferramenta para cada etapa do fluxo DTF/DTG.
+              Do arquivo que o cliente envia até a folha fechada para o RIP — sem depender de software caro na bancada.
             </p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {tools.map((t) => (
