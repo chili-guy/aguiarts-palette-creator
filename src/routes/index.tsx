@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Hero } from "@/components/hero";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -113,57 +115,8 @@ function Index() {
       </header>
 
       <main>
-        {/* Hero */}
-        <section className="bg-gradient-hero">
-          <div className="mx-auto grid max-w-6xl gap-12 px-5 py-20 md:grid-cols-2 md:items-center md:py-28">
-            <div>
-              <span className="inline-flex rounded-full border border-border px-3 py-1 text-xs font-medium tracking-widest text-muted-foreground">
-                PLATAFORMA ONLINE PARA DTF E DTG
-              </span>
-              <h1 className="mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
-                Produza mais estampas em menos tempo
-              </h1>
-              <p className="mt-6 max-w-lg text-lg text-muted-foreground">
-                Halftone, vetorização, remoção de fundo, mockups e preparação de arquivos — tudo em um só lugar, sem instalar nada.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href="#planos"
-                  className="rounded-full bg-gradient-primary px-7 py-3 font-semibold text-primary-foreground shadow-elegant transition-transform hover:scale-[1.03]"
-                >
-                  Criar conta grátis
-                </a>
-                <a
-                  href="#ferramentas"
-                  className="rounded-full border border-border px-7 py-3 font-semibold text-foreground transition-colors hover:bg-secondary"
-                >
-                  Conhecer as ferramentas
-                </a>
-              </div>
-              <p className="mt-6 text-sm text-muted-foreground">
-                <span className="text-accent">★★★★★</span> 4,9/5 • Usado por estamparias, designers e produtores de DTF/DTG
-              </p>
-            </div>
+        <Hero />
 
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-card">
-              <div className="flex items-center justify-between border-b border-border pb-4">
-                <span className="font-display text-sm font-semibold">Printzy Studio</span>
-                <span className="text-xs text-muted-foreground">Painel • Ferramentas • Projetos</span>
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                {tools.slice(0, 6).map((t) => (
-                  <div key={t.name} className="rounded-xl bg-secondary p-3">
-                    <div className="text-lg text-primary-glow">{t.icon}</div>
-                    <div className="mt-1 text-sm font-medium">{t.name}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-                Projeto pronto para exportar — PNG • SVG • PDF • 300 DPI
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Benefícios */}
         <section className="mx-auto max-w-6xl px-5 py-20">

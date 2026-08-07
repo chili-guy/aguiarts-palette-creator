@@ -133,6 +133,27 @@
   box-shadow: var(--shadow-card);
 }
 
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-30px) translateX(15px); }
+}
+
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(20px) translateX(-20px); }
+}
+
+@utility animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+@utility animate-float-medium {
+  animation: float-medium 6s ease-in-out infinite;
+}
 
 @layer base {
   * {
@@ -144,3 +165,4 @@
     color: var(--color-foreground);
   }
 }
+
