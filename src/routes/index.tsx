@@ -86,6 +86,24 @@ const examples = [
     beforeAlt: "Arte de foguete isolada em fundo branco",
     afterAlt: "Mesma arte aplicada em mockup de camiseta preta",
   },
+  {
+    name: "Molduras PRO",
+    tag: "PRO",
+    desc: "Arte simples ganha moldura grunge e acabamento que valoriza a peça.",
+    before: exFrameBefore,
+    after: exFrameAfter,
+    beforeAlt: "Ilustração de caveira com asas sem moldura",
+    afterAlt: "Mesma ilustração com moldura circular grunge aplicada",
+  },
+  {
+    name: "Arquivo DTF",
+    tag: "GRÁTIS",
+    desc: "Artes espalhadas viram folha DTF encaixada, com régua e zero desperdício de filme.",
+    before: exDtfBefore,
+    after: exDtfAfter,
+    beforeAlt: "Artes espalhadas na folha com muito espaço vazio",
+    afterAlt: "Folha DTF com artes encaixadas em grade otimizada e régua",
+  },
 ];
 
 const benefits = [
