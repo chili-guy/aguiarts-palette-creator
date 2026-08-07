@@ -3,17 +3,17 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Printzy Studio | Ferramentas online para DTF e DTG" },
+      { title: "Printzy Studio | Prepare artes DTF/DTG em minutos" },
       {
         name: "description",
         content:
-          "Prepare artes para DTF e DTG no navegador: halftone, remoção de fundo, vetorizador, mockups, molduras e arquivos prontos para produção.",
+          "Ganhe velocidade na produção de DTF e DTG: halftone, remoção de fundo, vetorização, mockups e exportação profissional — tudo no navegador.",
       },
-      { property: "og:title", content: "Printzy Studio | Ferramentas online para DTF e DTG" },
+      { property: "og:title", content: "Printzy Studio | Prepare artes DTF/DTG em minutos" },
       {
         property: "og:description",
         content:
-          "Halftone, vetorizador, mockups e preparação de arquivos DTF/DTG em uma única plataforma online.",
+          "Halftone, vetor, mockups, fundo, bordas, spot e mais: produza arquivos prontos para impressão sem instalar nada.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -23,21 +23,21 @@ export const Route = createFileRoute("/")({
 });
 
 const tools = [
-  { tag: "PRO", icon: "⠿", name: "Halftone DTF/DTG", desc: "Retículas nítidas e semitransparências prontas para impressão." },
-  { tag: "GRÁTIS", icon: "◒", name: "Removedor de Fundo", desc: "Limpeza precisa sem comer as bordas da sua arte." },
-  { tag: "NOVO", icon: "◇", name: "Vetorizador PRO", desc: "Transforme artes em SVG limpo e editável no navegador." },
-  { tag: "NOVO", icon: "▣", name: "Mockup Studio", desc: "Aplique estampas, troque cores e exporte mockups profissionais." },
-  { tag: "PRO", icon: "⌗", name: "Molduras PRO", desc: "Bordas corridas, grunge e acabamentos transparentes." },
-  { tag: "PRO", icon: "◎", name: "Cor Spot PRO", desc: "Separe cores especiais com controle total." },
-  { tag: "PRO", icon: "↘", name: "Contração de Bordas", desc: "Evite halos brancos no acabamento final." },
-  { tag: "GRÁTIS", icon: "⬒", name: "Arquivo DTF", desc: "Monte folhas DTF com medidas, régua e exportação." },
+  { tag: "PRO", icon: "⠿", name: "Halftone DTF/DTG", desc: "Retículas nítidas que economizam tinta e mantêm a qualidade da estampa." },
+  { tag: "GRÁTIS", icon: "◒", name: "Removedor de Fundo", desc: "Fundo limpo em segundos sem estragar bordas finas ou detalhes." },
+  { tag: "NOVO", icon: "◇", name: "Vetorizador PRO", desc: "Transforme imagens em SVG escalável e pronto para produção em alta resolução." },
+  { tag: "NOVO", icon: "▣", name: "Mockup Studio", desc: "Apresente estampas em camisetas reais e venda mais antes de imprimir." },
+  { tag: "PRO", icon: "⌗", name: "Molduras PRO", desc: "Bordas corridas, efeitos grunge e acabamentos que valorizam o produto final." },
+  { tag: "PRO", icon: "◎", name: "Cor Spot PRO", desc: "Separe cores especiais com precisão e reduza erros na impressão." },
+  { tag: "PRO", icon: "↘", name: "Contração de Bordas", desc: "Elimine halos brancos e acabamentos feios no processo de transfer." },
+  { tag: "GRÁTIS", icon: "⬒", name: "Arquivo DTF", desc: "Monte folhas DTF otimizadas com medidas, régua e exportação rápida." },
 ];
 
 const benefits = [
-  { kicker: "100% ONLINE", title: "Nada para instalar", desc: "Acesse do computador e comece a trabalhar direto no navegador." },
-  { kicker: "FLUXO OTIMIZADO", title: "Produção mais rápida", desc: "Prepare arquivos em poucos cliques com controles profissionais." },
-  { kicker: "PLANO PRO", title: "Exports ilimitados", desc: "Produza sem limite mensal enquanto sua assinatura estiver ativa." },
-  { kicker: "ECOSSISTEMA", title: "Tudo em um só lugar", desc: "Halftone, vetor, mockups, fundo, bordas, spot e muito mais." },
+  { kicker: "MAIS VELOCIDADE", title: "Arte pronta em minutos", desc: "Pare de perder tempo com programas pesados. Suba, ajuste e exporte direto no navegador." },
+  { kicker: "MENOS RETRABALHO", title: "Arquivos que saem certo", desc: "Ferramentas calibradas para DTF e DTG reduzem erros de impressão e desperdício." },
+  { kicker: "EXPORTS ILIMITADOS", title: "Produção sem travar", desc: "Plano PRO libera downloads ilimitados para você produzir o quanto precisar." },
+  { kicker: "TUDO EM UM LUGAR", title: "Um fluxo só, do início ao fim", desc: "Halftone, vetor, mockup, fundo, bordas e spot — sem trocar de aplicativo." },
 ];
 
 const plans = [
@@ -45,7 +45,7 @@ const plans = [
     name: "Grátis",
     price: "R$ 0",
     period: "/ mês",
-    desc: "Ideal para conhecer a plataforma e testar o fluxo.",
+    desc: "Teste a plataforma e já prepare suas primeiras artes.",
     items: ["Ferramentas grátis liberadas", "5 exports PRO por mês", "Conta Printzy gratuita"],
     cta: "Criar conta grátis",
     featured: false,
@@ -54,27 +54,27 @@ const plans = [
     name: "Mensal PRO",
     price: "R$ 19,90",
     period: "/ mês",
-    desc: "Para usar as ferramentas premium no dia a dia.",
-    items: ["Exports PRO ilimitados", "Ferramentas premium", "Atualizações da plataforma", "Produção recorrente"],
-    cta: "Assinar mensal",
+    desc: "O plano ideal para quem produz todo dia e quer resultado profissional.",
+    items: ["Exports PRO ilimitados", "Todas as ferramentas premium", "Atualizações incluídas", "Suporte prioritário"],
+    cta: "Assinar agora",
     featured: true,
   },
   {
     name: "Anual PRO",
     price: "R$ 127",
     period: "/ ano",
-    desc: "Melhor custo para produzir o ano todo.",
-    items: ["Exports PRO ilimitados", "Melhor custo-benefício", "Atualizações da plataforma", "Acesso anual completo"],
-    cta: "Assinar anual",
+    desc: "Melhor custo para quem quer produzir o ano inteiro pagando menos.",
+    items: ["Exports PRO ilimitados", "Melhor custo-benefício", "Atualizações incluídas", "Acesso anual completo"],
+    cta: "Economizar no anual",
     featured: false,
   },
 ];
 
 const faqs = [
-  { q: "Preciso instalar algum programa?", a: "Não. As ferramentas funcionam direto no navegador do computador." },
-  { q: "Posso usar para DTF e DTG?", a: "Sim. A plataforma foi criada para preparar arquivos desses dois fluxos." },
-  { q: "Qual a diferença entre o grátis e o PRO?", a: "O grátis libera as ferramentas básicas. O PRO libera recursos premium e exports ilimitados." },
-  { q: "O plano mensal recebe atualizações?", a: "Sim. Mensal e anual recebem todas as atualizações enquanto o acesso estiver ativo." },
+  { q: "Preciso instalar algum programa?", a: "Não. Tudo funciona no navegador do computador. Basta criar uma conta e começar." },
+  { q: "Funciona para DTF e DTG?", a: "Sim. As ferramentas foram calibradas para os dois fluxos, com exports prontos para produção." },
+  { q: "Qual a diferença do grátis para o PRO?", a: "O grátis libera ferramentas básicas e 5 exports PRO. O PRO libera tudo, com downloads ilimitados." },
+  { q: "Posso cancelar a assinatura quando quiser?", a: "Sim. O plano mensal pode ser cancelado a qualquer momento. O anual garante o melhor preço." },
 ];
 
 function Logo() {
@@ -121,29 +121,27 @@ function Index() {
                 PLATAFORMA ONLINE PARA DTF E DTG
               </span>
               <h1 className="mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
-                Prepare arquivos para DTF e DTG sem programas pesados
+                Produza mais estampas em menos tempo
               </h1>
               <p className="mt-6 max-w-lg text-lg text-muted-foreground">
-                Crie halftones, remova fundos, vetorize artes, monte mockups e deixe tudo pronto
-                para produção — direto no navegador.
+                Halftone, vetorização, remoção de fundo, mockups e preparação de arquivos — tudo em um só lugar, sem instalar nada.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
                   href="#planos"
                   className="rounded-full bg-gradient-primary px-7 py-3 font-semibold text-primary-foreground shadow-elegant transition-transform hover:scale-[1.03]"
                 >
-                  Começar grátis
+                  Criar conta grátis
                 </a>
                 <a
                   href="#ferramentas"
                   className="rounded-full border border-border px-7 py-3 font-semibold text-foreground transition-colors hover:bg-secondary"
                 >
-                  Ver ferramentas
+                  Conhecer as ferramentas
                 </a>
               </div>
               <p className="mt-6 text-sm text-muted-foreground">
-                <span className="text-accent">★★★★★</span> 4,9/5 • Para designers, estamparias, DTF,
-                DTG e personalizados
+                <span className="text-accent">★★★★★</span> 4,9/5 • Usado por estamparias, designers e produtores de DTF/DTG
               </p>
             </div>
 
@@ -170,11 +168,10 @@ function Index() {
         {/* Benefícios */}
         <section className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Uma plataforma, todo o fluxo
+            Menos etapa. Mais produção. Menos dor de cabeça.
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Ferramentas criadas para resolver etapas reais da preparação de arquivos, sem instalar
-            programas e sem trocar de aplicativo toda hora.
+            A Printzy foi feita para quem vive de estampa. Cada ferramenta resolve um problema real do dia a dia da produção.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {benefits.map((b) => (
@@ -191,11 +188,10 @@ function Index() {
         <section id="ferramentas" className="border-y border-border bg-card/40">
           <div className="mx-auto max-w-6xl px-5 py-20">
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Ferramentas profissionais
+              Tudo que você precisa para entregar arte pronta
             </h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              Do arquivo bruto ao arquivo pronto. A Printzy reúne as principais etapas da produção
-              DTF e DTG em um só lugar.
+              Do arquivo bruto ao arquivo final. Uma ferramenta para cada etapa do fluxo DTF/DTG.
             </p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {tools.map((t) => (
@@ -220,10 +216,10 @@ function Index() {
         {/* Planos */}
         <section id="planos" className="mx-auto max-w-6xl px-5 py-20">
           <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Planos para cada momento
+            Escolha seu plano e comece a produzir hoje
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Comece grátis e evolua quando sua produção pedir mais.
+            Comece de graça. Quando sua produção crescer, o PRO libera tudo sem limite de exports.
           </p>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {plans.map((p) => (
@@ -237,7 +233,7 @@ function Index() {
               >
                 {p.featured && (
                   <span className="absolute -top-3 left-7 rounded-full bg-gradient-primary px-3 py-1 text-[10px] font-bold tracking-widest text-primary-foreground">
-                    MAIS RECOMENDADO
+                    MAIS ESCOLHIDO
                   </span>
                 )}
                 <h3 className="font-display text-lg font-semibold">{p.name}</h3>
@@ -274,17 +270,16 @@ function Index() {
           <div className="mx-auto grid max-w-6xl gap-8 px-5 py-20 md:grid-cols-2 md:items-center">
             <div>
               <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-                Aprenda dentro do ecossistema
+                Aprenda a produzir melhor a cada aula
               </h2>
               <p className="mt-3 text-muted-foreground">
-                Aulas práticas de halftone, DTF, DTG, vetorização, mockups e preparação de arquivos
-                — aplique o processo direto nas ferramentas.
+                Conteúdo prático de halftone, DTF, DTG, vetorização e mockups — aplicado direto nas ferramentas da Printzy.
               </p>
               <a
                 href="#aulas"
                 className="mt-7 inline-block rounded-full border border-border px-7 py-3 text-sm font-semibold transition-colors hover:bg-secondary"
               >
-                Ver aulas
+                Acessar aulas
               </a>
             </div>
             <div className="rounded-3xl border border-border bg-card p-8 shadow-card">
@@ -292,10 +287,10 @@ function Index() {
                 AULAS PRINTZY STUDIO
               </div>
               <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <li>01 • Halftone perfeito para DTF</li>
-                <li>02 • Vetorização rápida de logos</li>
-                <li>03 • Mockups que vendem mais</li>
-                <li>04 • Montando folhas DTF sem desperdício</li>
+                <li>01 • Halftone que economiza tinta sem perder qualidade</li>
+                <li>02 • Vetorização de logos em poucos cliques</li>
+                <li>03 • Mockups que convertem em vendas</li>
+                <li>04 • Montagem de folhas DTF sem desperdício</li>
               </ul>
             </div>
           </div>
@@ -320,20 +315,23 @@ function Index() {
         <section className="mx-auto max-w-6xl px-5 pb-20">
           <div className="rounded-3xl bg-gradient-hero p-10 text-center shadow-elegant md:p-16">
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Comece grátis e prepare suas artes no navegador
+              Pronto para acelerar sua produção?
             </h2>
+            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+              Crie sua conta grátis e veja como é rápido preparar arquivos DTF e DTG com a Printzy.
+            </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
                 href="#planos"
                 className="rounded-full bg-gradient-primary px-7 py-3 font-semibold text-primary-foreground shadow-elegant transition-transform hover:scale-[1.03]"
               >
-                Começar grátis
+                Criar conta grátis
               </a>
               <a
                 href="#planos"
                 className="rounded-full border border-border px-7 py-3 font-semibold transition-colors hover:bg-secondary"
               >
-                Ver planos
+                Ver planos PRO
               </a>
             </div>
           </div>
