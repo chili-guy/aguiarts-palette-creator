@@ -61,13 +61,14 @@ export function Hero() {
             variants={item}
             className="font-display text-4xl font-bold leading-[1.08] tracking-tight text-foreground md:text-6xl lg:text-7xl"
           >
-            Sua estamparia <span className="text-accent">potencializada</span> por
-            inteligência
+            O pré-impressão da sua gráfica{" "}
+            <span className="text-accent">resolvido em minutos</span>
           </motion.h1>
 
           <motion.p variants={item} className="max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Prepare arquivos perfeitos para DTF e DTG em segundos. Halftone, remoção
-            de fundo e vetorização em um só lugar.
+            Serviços digitais para gráficas e estamparias: tratamento de arte,
+            halftone, vetorização e montagem de folha DTF prontos para a máquina —
+            sem fila no setor de arte.
           </motion.p>
 
           <motion.div variants={item} className="flex flex-col gap-4 pt-2 sm:flex-row">
