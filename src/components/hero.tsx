@@ -1,24 +1,28 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Sparkles, ArrowRight, Check, Wand2, Layers, Scissors } from "lucide-react";
-import heroSpaceBg from "@/assets/hero-space-bg.jpg";
-import heroFilm from "@/assets/hero-film.png";
+import {
+  Wand2,
+  Eraser,
+  PenTool,
+  Shirt,
+  Frame,
+  FileDown,
+  Plus,
+  ArrowRight,
+} from "lucide-react";
 
-const proofs = [
-  "Sem instalar nada",
-  "Arquivos em 300 DPI",
-  "Exportação ilimitada no PRO",
-];
-
-const chips = [
-  { icon: Wand2, label: "Halftone automático" },
-  { icon: Scissors, label: "Remove fundo em 1 clique" },
-  { icon: Layers, label: "Vetoriza e separa cores" },
+const tools = [
+  { icon: Wand2, label: "Halftone" },
+  { icon: Eraser, label: "Remover Fundo" },
+  { icon: PenTool, label: "Vetorizador" },
+  { icon: Shirt, label: "Mockups" },
+  { icon: Frame, label: "Molduras" },
+  { icon: FileDown, label: "Arquivo DTF" },
 ];
 
 export function Hero() {
   const reduceMotion = useReducedMotion();
 
-  const baseTransition = {
+  const transition = {
     duration: reduceMotion ? 0 : 0.7,
     ease: [0.22, 1, 0.36, 1] as const,
   };
@@ -27,257 +31,103 @@ export function Hero() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: reduceMotion ? 0 : 0.09, delayChildren: 0.05 },
+      transition: { staggerChildren: reduceMotion ? 0 : 0.08, delayChildren: 0.05 },
     },
   };
 
   const item = {
-    hidden: { opacity: 0, y: 22 },
-    visible: { opacity: 1, y: 0, transition: baseTransition },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition },
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-background">
-      {/* Space background */}
-      <img
-        src={heroSpaceBg}
-        alt=""
-        aria-hidden="true"
-        width={1920}
-        height={1080}
-        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover object-right opacity-95"
-      />
-      {/* Readability scrims */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(100deg,var(--background)_12%,color-mix(in_oklab,var(--background)_72%,transparent)_48%,transparent_85%)]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-t from-background to-transparent" />
-      <div className="pointer-events-none absolute -left-24 top-10 -z-10 h-[30rem] w-[30rem] rounded-full bg-primary/20 blur-[120px] animate-float-slow" />
-
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-5 pb-20 pt-16 md:grid-cols-[1.05fr_0.95fr] md:pb-28 md:pt-24">
-        {/* Copy column */}
-        <motion.div initial="hidden" animate="visible" variants={container} className="max-w-xl">
+    <section className="relative isolate flex w-full items-center justify-center overflow-hidden bg-background px-6 py-20 sm:py-24">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 text-center">
+        {/* Headline */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={container}
+          className="flex max-w-4xl flex-col items-center gap-6"
+        >
           <motion.span
             variants={item}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground backdrop-blur-sm"
+            className="rounded-full border border-accent/30 bg-accent/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-accent"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-glow opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary-glow" />
-            </span>
-            Estúdio online para DTF e DTG
+            Estúdio digital profissional
           </motion.span>
 
           <motion.h1
             variants={item}
-            className="mt-6 font-display text-[2.6rem] font-bold leading-[1.03] tracking-tight md:text-[4rem]"
+            className="font-display text-4xl font-bold leading-[1.08] tracking-tight text-foreground md:text-6xl lg:text-7xl"
           >
-            Prepare estampas{" "}
-            <span className="bg-gradient-to-r from-primary-glow via-accent to-primary-glow bg-clip-text text-transparent">
-              prontas para imprimir
-            </span>{" "}
-            em minutos
+            Sua estamparia <span className="text-accent">potencializada</span> por
+            inteligência
           </motion.h1>
 
-          <motion.p variants={item} className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
-            Halftone, remoção de fundo, vetorização, mockups e separação de cores
-            no navegador. Menos retrabalho na prensa, mais pedidos entregues.
+          <motion.p variants={item} className="max-w-2xl text-lg text-muted-foreground md:text-xl">
+            Prepare arquivos perfeitos para DTF e DTG em segundos. Halftone, remoção
+            de fundo e vetorização em um só lugar.
           </motion.p>
 
-          <motion.div variants={item} className="mt-7 flex flex-wrap gap-2">
-            {chips.map((c) => (
-              <span
-                key={c.label}
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm"
-              >
-                <c.icon className="h-3.5 w-3.5 text-primary-glow" />
-                {c.label}
-              </span>
-            ))}
-          </motion.div>
-
-          <motion.div variants={item} className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <motion.div variants={item} className="flex flex-col gap-4 pt-2 sm:flex-row">
             <a
               href="#planos"
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-primary px-8 py-4 font-semibold text-primary-foreground shadow-elegant transition-transform hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-glow"
+              className="group inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-8 py-4 font-display font-bold text-accent-foreground transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              <Sparkles className="h-4 w-4" />
               Começar grátis
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#ferramentas"
-              className="inline-flex items-center justify-center rounded-full border border-border bg-card/40 px-8 py-4 font-semibold text-foreground backdrop-blur-sm transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-glow"
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-card/40 px-8 py-4 font-display font-bold text-foreground backdrop-blur-sm transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Ver ferramentas
             </a>
           </motion.div>
-
-          <motion.ul
-            variants={item}
-            className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground"
-          >
-            {proofs.map((p) => (
-              <li key={p} className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-accent" />
-                {p}
-              </li>
-            ))}
-          </motion.ul>
         </motion.div>
 
-        {/* Visual column — mockup do sistema */}
+        {/* Workbench */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ ...baseTransition, duration: reduceMotion ? 0 : 0.9, delay: 0.15 }}
-          className="relative mx-auto w-full max-w-xl"
+          transition={{ ...transition, duration: reduceMotion ? 0 : 0.9, delay: 0.2 }}
+          className="group relative w-full max-w-5xl"
         >
-          <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-primary/25 blur-[90px]" />
+          <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-primary/25 blur-[120px]" />
+          <div className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-accent/15 blur-[120px]" />
 
-          <motion.div
-            {...(reduceMotion ? {} : { animate: { y: [0, -10, 0] } })}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="relative overflow-hidden rounded-2xl border border-border bg-card/90 shadow-elegant backdrop-blur-xl"
-          >
-            {/* Title bar */}
-            <div className="flex items-center gap-3 border-b border-border/70 bg-secondary/40 px-4 py-2.5">
-              <div className="flex gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
-              </div>
-              <span className="truncate text-xs font-medium text-muted-foreground">
-                printzy.studio — estampa-astronauta.png
-              </span>
-              <span className="ml-auto hidden items-center gap-1.5 rounded-full bg-primary/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-glow sm:inline-flex">
-                <Sparkles className="h-3 w-3" /> PRO
-              </span>
-            </div>
-
-            <div className="flex">
-              {/* Toolbar */}
-              <div className="hidden flex-col gap-1.5 border-r border-border/70 bg-secondary/20 p-2 sm:flex">
-                {[Wand2, Scissors, Layers, Sparkles].map((Icon, i) => (
-                  <span
-                    key={i}
-                    className={`grid h-9 w-9 place-items-center rounded-xl ${
-                      i === 0
-                        ? "bg-gradient-primary text-primary-foreground shadow-card"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </span>
-                ))}
-              </div>
-
-              {/* Canvas */}
-              <div className="relative min-w-0 flex-1 p-4">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border/70 bg-[repeating-conic-gradient(color-mix(in_oklab,var(--foreground)_8%,transparent)_0%_25%,transparent_0%_50%)] bg-[length:16px_16px]">
-                  <img
-                    src={heroFilm}
-                    alt="Prévia do editor Printzy aplicando halftone em uma estampa de astronauta geométrico"
-                    width={1024}
-                    height={1024}
-                    className="absolute inset-0 h-full w-full object-contain p-3"
-                  />
-                  {/* Halftone processing overlay */}
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,color-mix(in_oklab,var(--primary-glow)_55%,transparent)_1px,transparent_1.6px)] bg-[length:7px_7px] opacity-40 mix-blend-screen" />
-                  {/* Scan line */}
-                  <motion.div
-                    {...(reduceMotion ? {} : { animate: { y: ["-10%", "110%"] } })}
-                    transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute inset-x-0 top-0 h-16 bg-[linear-gradient(to_bottom,transparent,color-mix(in_oklab,var(--primary-glow)_35%,transparent),transparent)]"
-                  />
-                  {/* Selection frame */}
-                  <div className="pointer-events-none absolute inset-4 rounded-lg border border-dashed border-primary-glow/45" />
-                  <span className="absolute left-4 top-4 rounded-md bg-background/75 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-glow backdrop-blur">
-                    Halftone • 45 LPI
-                  </span>
-                </div>
-
-                {/* Sliders / controls */}
-                <div className="mt-3 grid gap-2.5">
-                  {[
-                    { label: "Frequência", value: 72 },
-                    { label: "Ângulo", value: 45 },
-                    { label: "Contraste", value: 88 },
-                  ].map((s, i) => (
-                    <div key={s.label} className="flex items-center gap-3">
-                      <span className="w-20 shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {s.label}
-                      </span>
-                      <span className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-secondary">
-                        <motion.span
-                          initial={{ width: 0 }}
-                          animate={{ width: `${s.value}%` }}
-                          transition={{ duration: reduceMotion ? 0 : 1.1, delay: 0.5 + i * 0.12, ease: "easeOut" }}
-                          className="absolute inset-y-0 left-0 rounded-full bg-gradient-primary"
-                        />
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Layers panel */}
-              <div className="hidden w-32 flex-col gap-2 border-l border-border/70 bg-secondary/20 p-3 lg:flex">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Camadas
-                </span>
-                {["Halftone", "Traço", "Fundo removido"].map((l, i) => (
-                  <span
-                    key={l}
-                    className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px] ${
-                      i === 0 ? "bg-primary/15 text-foreground" : "text-muted-foreground"
-                    }`}
-                  >
-                    <span className="h-2 w-2 shrink-0 rounded-sm bg-primary-glow/70" />
-                    <span className="truncate">{l}</span>
-                  </span>
-                ))}
-                <div className="mt-auto rounded-lg bg-gradient-primary px-2 py-2 text-center text-[10px] font-bold text-primary-foreground">
-                  Exportar
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Floating status cards */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ ...baseTransition, delay: 0.55 }}
-            className="absolute -left-3 top-24 z-20 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-card backdrop-blur-md md:-left-8"
-          >
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Processado em
-            </div>
-            <div className="mt-0.5 font-display text-lg font-bold">2,4s</div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ ...baseTransition, delay: 0.7 }}
-            className="absolute -right-3 -bottom-5 z-20 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-card backdrop-blur-md md:-right-6"
-          >
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              <span className="text-xs font-medium">Arquivo pronto</span>
-            </div>
-            <div className="mt-1.5 flex gap-1.5">
-              {["PNG", "SVG", "PDF"].map((f) => (
-                <span
-                  key={f}
-                  className="rounded-md bg-secondary px-2 py-0.5 text-[10px] font-semibold text-foreground"
+          <div className="relative rounded-2xl border border-border bg-card p-4 shadow-elegant md:p-8">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
+              {tools.map((t) => (
+                <div
+                  key={t.label}
+                  className="flex flex-col items-center gap-3 rounded-xl border border-border/60 bg-secondary/40 p-4 transition-colors hover:border-accent/50"
                 >
-                  {f}
-                </span>
+                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-primary/20 text-primary-glow">
+                    <t.icon className="h-5 w-5" />
+                  </span>
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {t.label}
+                  </span>
+                </div>
               ))}
             </div>
-          </motion.div>
-        </motion.div>
 
+            {/* Canvas */}
+            <div className="relative mt-8 flex h-48 w-full items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-background md:h-64">
+              <div className="pointer-events-none absolute inset-0 opacity-10 [background-image:radial-gradient(circle_at_2px_2px,var(--foreground)_1px,transparent_0)] [background-size:24px_24px]" />
+              <div className="z-10 flex flex-col items-center gap-4">
+                <span className="grid h-16 w-16 place-items-center rounded-full border-2 border-dashed border-accent/40 text-accent transition-colors group-hover:border-accent">
+                  <Plus className="h-8 w-8" />
+                </span>
+                <p className="text-sm text-muted-foreground">
+                  Arraste sua estampa aqui para começar
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
