@@ -174,7 +174,6 @@ function Index() {
             <a className="transition-colors hover:text-foreground" href="#ferramentas">Ferramentas</a>
             <a className="transition-colors hover:text-foreground" href="#exemplos">Exemplos</a>
             <a className="transition-colors hover:text-foreground" href="#planos">Planos</a>
-            <a className="transition-colors hover:text-foreground" href="#aulas">Aulas</a>
             <a className="transition-colors hover:text-foreground" href="#faq">Dúvidas</a>
           </nav>
           <a
@@ -323,37 +322,6 @@ function Index() {
                 </a>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Aulas */}
-        <section id="aulas" className="border-y border-border bg-card/40">
-          <div className="mx-auto grid max-w-6xl gap-8 px-5 py-20 md:grid-cols-2 md:items-center">
-            <div>
-              <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-                Aprenda a produzir melhor a cada aula
-              </h2>
-              <p className="mt-3 text-muted-foreground">
-                Conteúdo prático de halftone, DTF, DTG, vetorização e mockups — aplicado direto nas ferramentas da Printzy.
-              </p>
-              <a
-                href="#aulas"
-                className="mt-7 inline-block rounded-full border border-border px-7 py-3 text-sm font-semibold transition-colors hover:bg-secondary"
-              >
-                Acessar aulas
-              </a>
-            </div>
-            <div className="rounded-3xl border border-border bg-card p-8 shadow-card">
-              <div className="font-display text-sm font-semibold text-primary-glow">
-                AULAS PRINTZY STUDIO
-              </div>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <li>01 • Halftone que economiza tinta sem perder qualidade</li>
-                <li>02 • Vetorização de logos em poucos cliques</li>
-                <li>03 • Mockups que convertem em vendas</li>
-                <li>04 • Montagem de folhas DTF sem desperdício</li>
-              </ul>
-            </div>
           </div>
         </section>
 
