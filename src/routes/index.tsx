@@ -59,9 +59,9 @@ const examples = [
     afterAlt: "Mesma ilustração convertida em retícula halftone pronta para impressão",
   },
   {
-    name: "Removedor de Fundo",
+    name: "Limpador de Fundo",
     tag: "GRÁTIS",
-    desc: "Recorte automático com bordas preservadas, pronto para mockup ou catálogo.",
+    desc: "Recorte pronto para catálogo, mockup e impressão sem passar pelo designer.",
     before: exBgBefore,
     after: exBgAfter,
     beforeAlt: "Foto de pessoa com fundo bagunçado antes da remoção",
