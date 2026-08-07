@@ -7,6 +7,10 @@ import exVectorBefore from "@/assets/ex-vector-before.jpg";
 import exVectorAfter from "@/assets/ex-vector-after.jpg";
 import exMockupBefore from "@/assets/ex-mockup-before.jpg";
 import exMockupAfter from "@/assets/ex-mockup-after.jpg";
+import exFrameBefore from "@/assets/ex-frame-before.jpg";
+import exFrameAfter from "@/assets/ex-frame-after.jpg";
+import exDtfBefore from "@/assets/ex-dtf-before.jpg";
+import exDtfAfter from "@/assets/ex-dtf-after.jpg";
 import { createFileRoute } from "@tanstack/react-router";
 import { Hero } from "@/components/hero";
 
