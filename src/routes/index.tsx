@@ -1,3 +1,12 @@
+import { BeforeAfter } from "@/components/before-after";
+import exHalftoneBefore from "@/assets/ex-halftone-before.jpg";
+import exHalftoneAfter from "@/assets/ex-halftone-after.jpg";
+import exBgBefore from "@/assets/ex-bg-before.jpg";
+import exBgAfter from "@/assets/ex-bg-after.png";
+import exVectorBefore from "@/assets/ex-vector-before.jpg";
+import exVectorAfter from "@/assets/ex-vector-after.jpg";
+import exMockupBefore from "@/assets/ex-mockup-before.jpg";
+import exMockupAfter from "@/assets/ex-mockup-after.jpg";
 import { createFileRoute } from "@tanstack/react-router";
 import { Hero } from "@/components/hero";
 
@@ -33,6 +42,46 @@ const tools = [
   { tag: "PRO", icon: "◎", name: "Cor Spot PRO", desc: "Separe cores especiais com precisão e reduza erros na impressão." },
   { tag: "PRO", icon: "↘", name: "Contração de Bordas", desc: "Elimine halos brancos e acabamentos feios no processo de transfer." },
   { tag: "GRÁTIS", icon: "⬒", name: "Arquivo DTF", desc: "Monte folhas DTF otimizadas com medidas, régua e exportação rápida." },
+];
+
+const examples = [
+  {
+    name: "Halftone DTF/DTG",
+    tag: "PRO",
+    desc: "A arte cheia vira retícula calibrada, com menos tinta e traço limpo na prensa.",
+    before: exHalftoneBefore,
+    after: exHalftoneAfter,
+    beforeAlt: "Ilustração de lobo geométrico colorida antes do halftone",
+    afterAlt: "Mesma ilustração convertida em retícula halftone pronta para impressão",
+  },
+  {
+    name: "Removedor de Fundo",
+    tag: "GRÁTIS",
+    desc: "Recorte automático com bordas preservadas, pronto para mockup ou catálogo.",
+    before: exBgBefore,
+    after: exBgAfter,
+    beforeAlt: "Foto de pessoa com fundo bagunçado antes da remoção",
+    afterAlt: "Mesma foto com fundo removido e recorte limpo",
+    checkered: true,
+  },
+  {
+    name: "Vetorizador PRO",
+    tag: "NOVO",
+    desc: "Logo pixelado vira vetor nítido, escalável em qualquer tamanho de estampa.",
+    before: exVectorBefore,
+    after: exVectorAfter,
+    beforeAlt: "Logo de foguete pixelado e borrado antes da vetorização",
+    afterAlt: "Mesmo logo vetorizado com bordas nítidas",
+  },
+  {
+    name: "Mockup Studio",
+    tag: "NOVO",
+    desc: "Sua arte aplicada em peça real para aprovar com o cliente antes de imprimir.",
+    before: exMockupBefore,
+    after: exMockupAfter,
+    beforeAlt: "Arte de foguete isolada em fundo branco",
+    afterAlt: "Mesma arte aplicada em mockup de camiseta preta",
+  },
 ];
 
 const benefits = [
@@ -163,6 +212,42 @@ function Index() {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Exemplos antes e depois */}
+        <section id="exemplos" className="mx-auto max-w-6xl px-5 py-20">
+          <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
+            Veja o antes e o depois de cada ferramenta
+          </h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">
+            Arraste o cursor em cada exemplo e compare o arquivo bruto com o resultado
+            que sai pronto da Printzy.
+          </p>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {examples.map((ex) => (
+              <article
+                key={ex.name}
+                className="rounded-2xl border border-border bg-card p-5 shadow-card"
+              >
+                <BeforeAfter
+                  before={ex.before}
+                  after={ex.after}
+                  beforeAlt={ex.beforeAlt}
+                  afterAlt={ex.afterAlt}
+                  {...(ex.checkered ? { checkered: true } : {})}
+                />
+                <div className="mt-4 flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-display text-lg font-semibold">{ex.name}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{ex.desc}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold tracking-widest text-muted-foreground">
+                    {ex.tag}
+                  </span>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
