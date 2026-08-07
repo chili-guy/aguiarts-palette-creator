@@ -150,6 +150,7 @@ function Index() {
           <Logo />
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a className="transition-colors hover:text-foreground" href="#ferramentas">Ferramentas</a>
+            <a className="transition-colors hover:text-foreground" href="#exemplos">Exemplos</a>
             <a className="transition-colors hover:text-foreground" href="#planos">Planos</a>
             <a className="transition-colors hover:text-foreground" href="#aulas">Aulas</a>
             <a className="transition-colors hover:text-foreground" href="#faq">Dúvidas</a>
