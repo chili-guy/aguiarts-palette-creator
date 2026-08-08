@@ -25,7 +25,10 @@ export function BeforeAfter({ before, after, beforeAlt, afterAlt, checkered }: P
   return (
     <div
       ref={ref}
-      className="group relative aspect-square w-full select-none overflow-hidden rounded-xl border border-border bg-secondary"
+      // touch-pan-y: without it the browser claims horizontal touch gestures for
+      // scrolling, cancels the pointer stream mid-drag and the handle sticks. Vertical
+      // panning stays with the browser so the page still scrolls over the widget.
+      className="group relative aspect-square w-full touch-pan-y cursor-ew-resize select-none overflow-hidden rounded-xl border border-border bg-secondary"
       onPointerDown={(e) => {
         dragging.current = true;
         e.currentTarget.setPointerCapture(e.pointerId);
