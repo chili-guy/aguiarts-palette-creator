@@ -1,14 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { applyFrame, type FrameStyle, type RGBAImage } from "@/lib/image-core";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
 import { CanvasExportButtons } from "@/components/canvas-export-buttons";
 import { ToolPageShell } from "@/components/tool-page-shell";
+import {
+  ControlGroup,
+  Hint,
+  OptionPills,
+  PreviewPlaceholder,
+  PreviewStage,
+  SliderRow,
+  ToolLayout,
+} from "@/components/tool-ui";
 import { drawRGBAImage, imageToRGBAImage, loadImageFile } from "@/lib/canvas-tools";
 
 export const Route = createFileRoute("/ferramentas/molduras")({
@@ -65,99 +68,100 @@ function FramesTool() {
 
   return (
     <ToolPageShell
-      title="Molduras PRO"
-      subtitle="Acabamentos e bordas prontos para agregar valor ao pedido sem hora extra de criação."
+      title="Molduras Pro"
+      subtitle="Aplique molduras corridas e bordas grunge na arte com PNG transparente."
     >
-      <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Pré-visualização</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex min-h-80 items-center justify-center rounded-md border border-dashed bg-muted/30 p-4">
-              {processed ? (
-                <canvas
-                  ref={canvasRef}
-                  role="img"
-                  aria-label="Pré-visualização"
-                  className="max-h-[60vh] max-w-full rounded-sm shadow-sm"
+      <ToolLayout
+        controls={
+          <>
+            <ControlGroup step="01" label="Imagem">
+              <label className="block cursor-pointer rounded-xl border border-border-strong bg-primary/10 px-4 py-4 text-center transition-colors hover:bg-primary/15">
+                <span className="block text-sm font-bold">Selecionar imagem</span>
+                <span className="block text-xs text-muted-foreground">PNG, JPG ou WebP</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="sr-only"
                 />
-              ) : (
-                <p className="text-sm text-muted-foreground">Envie uma imagem para começar</p>
-              )}
-            </div>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Input type="file" accept="image/*" onChange={handleFileChange} className="w-auto" />
-              {error && <span className="text-sm text-destructive">{error}</span>}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Ajustes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="space-y-2">
-              <Label>Estilo</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {STYLES.map((s) => (
-                  <Button
-                    key={s.value}
-                    type="button"
-                    variant={style === s.value ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setStyle(s.value)}
-                  >
-                    {s.label}
-                  </Button>
-                ))}
+              </label>
+              <div className="rounded-xl border border-border bg-secondary px-3 py-2.5">
+                <p className="text-xs font-bold">{fileName ?? "Nenhuma imagem carregada"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {fileName ? "Ajuste a moldura ao lado." : "Carregue uma imagem para começar."}
+                </p>
               </div>
-            </div>
+              {error && <p className="text-xs text-destructive">{error}</p>}
+            </ControlGroup>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Espessura</Label>
-                <span className="text-sm text-muted-foreground tabular-nums">{thickness}px</span>
-              </div>
-              <Slider
-                value={[thickness]}
+            <ControlGroup step="02" label="Molduras">
+              <OptionPills
+                options={STYLES.map((s) => ({ value: s.value, label: s.label }))}
+                value={style}
+                onChange={setStyle}
+              />
+              <Hint>
+                a moldura respeita a transparência do PNG — envie a arte já com o fundo removido
+                para o acabamento encostar no desenho.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="03" label="Ajuste da arte">
+              <SliderRow
+                label="Espessura"
+                value={thickness}
                 min={1}
                 max={60}
-                step={1}
-                onValueChange={(v) => setThickness(Array.isArray(v) ? (v[0] ?? 0) : v)}
+                suffix="px"
+                onChange={setThickness}
               />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Distância da borda</Label>
-                <span className="text-sm text-muted-foreground tabular-nums">{inset}px</span>
-              </div>
-              <Slider
-                value={[inset]}
+              <SliderRow
+                label="Distância da borda"
+                value={inset}
                 min={0}
                 max={60}
-                step={1}
-                onValueChange={(v) => setInset(Array.isArray(v) ? (v[0] ?? 0) : v)}
+                suffix="px"
+                onChange={setInset}
+              />
+              <div className="space-y-2">
+                <span className="text-sm font-medium">Cor</span>
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="h-10 w-full cursor-pointer rounded-xl border border-border bg-secondary"
+                />
+              </div>
+            </ControlGroup>
+
+            <div className="border-t border-border pt-4">
+              <CanvasExportButtons
+                canvasRef={canvasRef}
+                baseName={baseName}
+                disabled={!processed}
               />
             </div>
-
-            <div className="space-y-2">
-              <Label>Cor</Label>
-              <input
-                type="color"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                className="h-9 w-full cursor-pointer rounded-md border"
-              />
-            </div>
-
-            <Separator />
-            <CanvasExportButtons canvasRef={canvasRef} baseName={baseName} disabled={!processed} />
-          </CardContent>
-        </Card>
-      </div>
+          </>
+        }
+      >
+        <PreviewStage
+          title="Prévia da arte"
+          caption={fileName ?? "Carregue uma imagem."}
+          status={processed ? `Moldura ${style} aplicada` : "Sem imagem"}
+          hint="Preview = zoom • arraste para navegar"
+        >
+          {processed ? (
+            <canvas
+              ref={canvasRef}
+              role="img"
+              aria-label="Pré-visualização"
+              className="max-h-full max-w-full rounded-lg bg-checkerboard shadow-card"
+            />
+          ) : (
+            <PreviewPlaceholder />
+          )}
+        </PreviewStage>
+      </ToolLayout>
     </ToolPageShell>
   );
 }
