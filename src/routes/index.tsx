@@ -51,14 +51,12 @@ export const Route = createFileRoute("/")({
 
 const tools = [
   {
-    tag: "PRO",
     icon: Grid3x3,
     name: "Halftone DTF/DTG",
     desc: "Retícula calibrada para sua máquina: menos tinta por peça e traço limpo na prensa.",
     href: "/ferramentas/halftone",
   },
   {
-    tag: "GRÁTIS",
     icon: Eraser,
     name: "Limpador de Fundo",
     desc: "Arte do cliente chega com fundo sujo e sai recortada, sem retrabalho do setor de arte.",
@@ -79,28 +77,24 @@ const tools = [
     href: "/ferramentas/mockup",
   },
   {
-    tag: "PRO",
     icon: Frame,
     name: "Molduras PRO",
     desc: "Acabamentos e bordas prontos para agregar valor ao pedido sem hora extra de criação.",
     href: "/ferramentas/molduras",
   },
   {
-    tag: "PRO",
     icon: Palette,
     name: "Cor Spot PRO",
     desc: "Separação de cores especiais com precisão para fechar o job certo na primeira tiragem.",
     href: "/ferramentas/cor-spot",
   },
   {
-    tag: "PRO",
     icon: Shrink,
     name: "Contração de Bordas",
     desc: "Fim do halo branco no transfer: acabamento de gráfica profissional em toda peça.",
     href: "/ferramentas/contracao-de-bordas",
   },
   {
-    tag: "GRÁTIS",
     icon: LayoutGrid,
     name: "Arquivo DTF",
     desc: "Monte a folha com encaixe otimizado, régua e sangria — aproveite cada metro de filme.",
@@ -129,7 +123,6 @@ const steps = [
 const examples = [
   {
     name: "Halftone DTF/DTG",
-    tag: "PRO",
     desc: "A arte do cliente vira retícula calibrada: menos consumo de tinta por tiragem.",
     before: exHalftoneBefore,
     after: exHalftoneAfter,
@@ -138,7 +131,6 @@ const examples = [
   },
   {
     name: "Limpador de Fundo",
-    tag: "GRÁTIS",
     desc: "Recorte pronto para catálogo, mockup e impressão sem passar pelo designer.",
     before: exBgBefore,
     after: exBgAfter,
@@ -166,7 +158,6 @@ const examples = [
   },
   {
     name: "Molduras PRO",
-    tag: "PRO",
     desc: "Acabamento que agrega valor ao pedido sem tempo extra no setor de criação.",
     before: exFrameBefore,
     after: exFrameAfter,
@@ -175,7 +166,6 @@ const examples = [
   },
   {
     name: "Arquivo DTF",
-    tag: "GRÁTIS",
     desc: "Vários pedidos encaixados na mesma folha: mais peças por metro de filme.",
     before: exDtfBefore,
     after: exDtfAfter,
@@ -419,7 +409,7 @@ function Index() {
                       <span className="grid size-9 place-items-center rounded-md bg-secondary text-foreground">
                         <t.icon className="size-4" />
                       </span>
-                      <Tag>{t.tag}</Tag>
+                      {t.tag && <Tag>{t.tag}</Tag>}
                     </div>
                     <h3 className="mt-4 font-display text-lg font-semibold">{t.name}</h3>
                     <p className="mt-2 text-sm text-muted-foreground">{t.desc}</p>
@@ -461,7 +451,7 @@ function Index() {
                     <h3 className="font-display text-lg font-semibold">{ex.name}</h3>
                     <p className="mt-1 text-sm text-muted-foreground">{ex.desc}</p>
                   </div>
-                  <Tag>{ex.tag}</Tag>
+                  {ex.tag && <Tag>{ex.tag}</Tag>}
                 </div>
               </article>
             ))}

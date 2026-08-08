@@ -53,17 +53,10 @@ function AppTopbar({ title, subtitle }: { title: string; subtitle: string }) {
         >
           PT <ChevronDown className="h-3 w-3" />
         </button>
+        {/* No accounts and no plans yet: every tool is open and exports are
+            unmetered, so the topbar carries no quota or subscription state. */}
         <span className="hidden rounded-lg border border-border bg-secondary px-3 py-2 text-xs font-semibold lg:inline">
-          <span className="text-muted-foreground">Exports:</span>{" "}
-          <span className="text-accent">0/5</span>{" "}
-          <span className="text-muted-foreground">• restam 5</span>
-        </span>
-        <span className="flex items-center gap-2 rounded-lg border border-border bg-secondary px-2 py-1.5 text-xs font-semibold">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-gradient-primary text-primary-foreground">
-            R
-          </span>
-          <span className="hidden sm:inline">Gratuito</span>
-          <ChevronDown className="hidden h-3 w-3 sm:block" />
+          <span className="text-accent">Exports ilimitados</span>
         </span>
       </div>
     </header>
@@ -114,15 +107,10 @@ function AppSidebar() {
 
       <div className="border-t border-border p-3">
         <div className="rounded-xl border border-border bg-secondary p-3">
-          <p className="text-sm font-bold">Plano atual: Gratuito</p>
-          <p className="text-xs text-muted-foreground">Exports: 0/5</p>
-          <Link
-            to="/"
-            hash="planos"
-            className="mt-3 block rounded-lg border border-border bg-popover px-3 py-2 text-center text-xs font-semibold transition-colors hover:border-border-strong"
-          >
-            Gerenciar assinatura
-          </Link>
+          <p className="text-sm font-bold">Tudo liberado</p>
+          <p className="text-xs text-muted-foreground">
+            Todas as ferramentas, sem login e sem limite de exports.
+          </p>
         </div>
       </div>
     </aside>

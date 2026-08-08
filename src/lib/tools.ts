@@ -29,8 +29,8 @@ export type Tool = {
   title: string;
   subtitle: string;
   icon: LucideIcon;
-  /** Plan badge shown on the dashboard card, as on the real landing. */
-  badge?: "PRO" | "GRÁTIS" | "NOVO";
+  /** Only "NOVO" is used: there are no plans, so PRO/GRÁTIS markers would lie. */
+  badge?: "NOVO";
   to?: string;
   built: boolean;
 };
@@ -42,7 +42,6 @@ export const TOOLS: Tool[] = [
     title: "Halftone DTF Pro",
     subtitle: "Crie halftone e tramados para DTF/DTG em poucos cliques.",
     icon: Grid3x3,
-    badge: "PRO",
     to: "/ferramentas/halftone",
     built: true,
   },
@@ -52,7 +51,6 @@ export const TOOLS: Tool[] = [
     title: "Molduras Pro",
     subtitle: "Aplique molduras corridas e bordas grunge na arte com PNG transparente.",
     icon: Frame,
-    badge: "PRO",
     to: "/ferramentas/molduras",
     built: true,
   },
@@ -83,7 +81,6 @@ export const TOOLS: Tool[] = [
     title: "Arquivo DTF",
     subtitle: "Monte folhas DTF com medidas, régua e exportação em alta qualidade.",
     icon: FileText,
-    badge: "GRÁTIS",
     to: "/ferramentas/arquivo-dtf",
     built: true,
   },
@@ -93,7 +90,6 @@ export const TOOLS: Tool[] = [
     title: "Removedor de Fundo Pro",
     subtitle: "Remova fundos com precisão e recupere cores internas.",
     icon: Eraser,
-    badge: "GRÁTIS",
     to: "/ferramentas/remover-fundo",
     built: true,
   },

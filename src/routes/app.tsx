@@ -8,9 +8,7 @@ export const Route = createFileRoute("/app")({
 });
 
 const BADGE_STYLE: Record<string, string> = {
-  PRO: "bg-accent/20 text-accent border-border-strong",
   NOVO: "bg-accent/15 text-accent border-accent/30",
-  GRÁTIS: "bg-secondary text-muted-foreground border-border",
 };
 
 function ToolsDashboard() {
