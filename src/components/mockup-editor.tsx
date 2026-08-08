@@ -236,7 +236,7 @@ export default function MockupEditor() {
           <CardTitle>Produto</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {MOCKUP_TEMPLATES.map((mt) => (
               <Button
                 key={mt.id}
