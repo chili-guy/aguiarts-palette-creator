@@ -77,14 +77,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Printzy | Serviços de pré-impressão para gráficas" },
+      {
+        name: "description",
+        content:
+          "Serviços digitais para gráficas: tratamento de arte, halftone, vetorização, remoção de fundo, mockups e montagem de folha DTF prontos para produção.",
+      },
+      { name: "author", content: "Printzy" },
+      { property: "og:title", content: "Printzy | Serviços de pré-impressão para gráficas" },
+      {
+        property: "og:description",
+        content:
+          "Sua gráfica entrega mais pedidos por dia: arte tratada, vetorizada e encaixada na folha DTF sem gargalo no setor de criação.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -97,7 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
   }),
 
