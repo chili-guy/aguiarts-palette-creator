@@ -8,7 +8,7 @@ export const Route = createFileRoute("/app")({
 });
 
 const BADGE_STYLE: Record<string, string> = {
-  PRO: "bg-primary/20 text-primary-glow border-border-strong",
+  PRO: "bg-accent/20 text-accent border-border-strong",
   NOVO: "bg-accent/15 text-accent border-accent/30",
   GRÁTIS: "bg-secondary text-muted-foreground border-border",
 };
@@ -25,8 +25,8 @@ function ToolsDashboard() {
             const card = (
               <>
                 <div className="flex items-start justify-between gap-3">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border-strong bg-primary/15">
-                    <tool.icon className="h-5 w-5 text-primary-glow" />
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border-strong bg-accent/12">
+                    <tool.icon className="h-5 w-5 text-accent" />
                   </span>
                   {tool.badge && (
                     <span

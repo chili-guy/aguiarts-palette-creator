@@ -75,7 +75,7 @@ function FramesTool() {
         controls={
           <>
             <ControlGroup step="01" label="Imagem">
-              <label className="block cursor-pointer rounded-xl border border-border-strong bg-primary/10 px-4 py-4 text-center transition-colors hover:bg-primary/15">
+              <label className="block cursor-pointer rounded-xl border border-border-strong bg-accent/10 px-4 py-4 text-center transition-colors hover:bg-accent/15">
                 <span className="block text-sm font-bold">Selecionar imagem</span>
                 <span className="block text-xs text-muted-foreground">PNG, JPG ou WebP</span>
                 <input

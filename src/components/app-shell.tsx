@@ -146,11 +146,11 @@ function SidebarLink({
       className={cn(
         "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors",
         active
-          ? "border border-border-strong bg-primary/15 text-foreground"
+          ? "border border-border-strong bg-accent/12 text-foreground"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground",
       )}
     >
-      <Icon className={cn("h-4 w-4 shrink-0", active && "text-primary-glow")} />
+      <Icon className={cn("h-4 w-4 shrink-0", active && "text-accent")} />
       <span className="min-w-0 flex-1">{label}</span>
     </Link>
   );

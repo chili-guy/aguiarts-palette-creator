@@ -57,11 +57,11 @@ export function ControlGroup({
     <section className="space-y-2.5">
       <h2 className="flex items-center gap-2">
         {step && (
-          <span className="grid h-5 w-5 place-items-center rounded-md bg-primary/25 font-mono text-[10px] font-bold text-primary-glow">
+          <span className="grid h-5 w-5 place-items-center rounded-md bg-accent/20 font-mono text-[10px] font-bold text-accent">
             {step}
           </span>
         )}
-        <span className="font-mono text-[11px] font-bold tracking-[0.14em] text-primary-glow uppercase">
+        <span className="font-mono text-[11px] font-bold tracking-[0.14em] text-accent uppercase">
           {label}
         </span>
       </h2>
@@ -74,7 +74,7 @@ export function ControlGroup({
 export function Hint({ children }: { children: ReactNode }) {
   return (
     <p className="text-xs leading-relaxed text-muted-foreground">
-      <span className="font-semibold text-primary-glow">Dica:</span> {children}
+      <span className="font-semibold text-accent">Dica:</span> {children}
     </p>
   );
 }
@@ -113,7 +113,7 @@ export function OptionPills<T extends string | number>({
             className={cn(
               "rounded-xl border px-3 py-2.5 text-left text-sm font-semibold transition-colors",
               active
-                ? "border-transparent bg-primary text-primary-foreground"
+                ? "border-transparent bg-accent text-accent-foreground"
                 : "border-border bg-secondary text-foreground hover:border-border-strong",
             )}
           >
@@ -123,7 +123,7 @@ export function OptionPills<T extends string | number>({
                 <span
                   className={cn(
                     "text-[11px] font-normal",
-                    active ? "text-primary-foreground/75" : "text-muted-foreground",
+                    active ? "text-accent-foreground/75" : "text-muted-foreground",
                   )}
                 >
                   {option.note}
@@ -159,7 +159,7 @@ export function SliderRow({
     <div className="space-y-2">
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-sm font-medium">{label}</span>
-        <span className="font-mono text-xs font-bold text-primary-glow tabular-nums">
+        <span className="font-mono text-xs font-bold text-accent tabular-nums">
           {value}
           {suffix}
         </span>
@@ -224,14 +224,14 @@ export function PreviewPlaceholder({ label = "Carregue uma imagem" }: { label?: 
         Depois / resultado
       </span>
       <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="absolute right-3 bottom-3 rounded-md bg-primary/25 px-2 py-1 font-mono text-[10px] font-bold text-primary-glow">
+      <span className="absolute right-3 bottom-3 rounded-md bg-accent/20 px-2 py-1 font-mono text-[10px] font-bold text-accent">
         100%
       </span>
     </div>
   );
 }
 
-/** The lime primary action — upload, export, download. One per screen. */
+/** The one emphasised action per screen — upload, export, download. */
 export function PrimaryAction({
   children,
   className,
