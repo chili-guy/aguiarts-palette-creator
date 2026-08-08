@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -27,22 +27,40 @@ function BackgroundRemovalTool() {
   const [status, setStatus] = useState<Status>("idle");
   const [stage, setStage] = useState<BgRemovalStage | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<Blob | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // The canvas only exists once status is "done", so the draw has to wait for
+  // that render to commit — painting straight after the await would hit a ref
+  // that is still null and silently produce a blank canvas.
+  useEffect(() => {
+    if (status !== "done" || !result || !canvasRef.current) return;
+    let cancelled = false;
+    const canvas = canvasRef.current;
+    void drawBlobToCanvas(canvas, result).catch((err: unknown) => {
+      if (cancelled) return;
+      console.error(err);
+      setError("Não foi possível desenhar o resultado.");
+      setStatus("error");
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [status, result]);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setError(null);
     setStage(null);
+    setResult(null);
     setFileName(file.name);
     setStatus("loading");
 
     try {
       const { removeBackgroundOnnx } = await import("@/lib/bg-removal-onnx");
       const resultBlob = await removeBackgroundOnnx(file, setStage);
-      if (canvasRef.current) {
-        await drawBlobToCanvas(canvasRef.current, resultBlob);
-      }
+      setResult(resultBlob);
       setStatus("done");
     } catch (err) {
       console.error(err);
