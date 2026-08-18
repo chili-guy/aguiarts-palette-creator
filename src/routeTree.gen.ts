@@ -12,11 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as FerramentasArquivoDtfRouteImport } from './routes/ferramentas.arquivo-dtf'
+import { Route as FerramentasCalculadoraRouteImport } from './routes/ferramentas.calculadora'
 import { Route as FerramentasContracaoDeBordasRouteImport } from './routes/ferramentas.contracao-de-bordas'
 import { Route as FerramentasCorSpotRouteImport } from './routes/ferramentas.cor-spot'
 import { Route as FerramentasHalftoneRouteImport } from './routes/ferramentas.halftone'
+import { Route as FerramentasLimpadorFundoRouteImport } from './routes/ferramentas.limpador-fundo'
+import { Route as FerramentasMelhoradorRouteImport } from './routes/ferramentas.melhorador'
 import { Route as FerramentasMockupRouteImport } from './routes/ferramentas.mockup'
 import { Route as FerramentasMoldurasRouteImport } from './routes/ferramentas.molduras'
+import { Route as FerramentasOrcamentoRouteImport } from './routes/ferramentas.orcamento'
+import { Route as FerramentasPontosFantasmasRouteImport } from './routes/ferramentas.pontos-fantasmas'
 import { Route as FerramentasRemoverFundoRouteImport } from './routes/ferramentas.remover-fundo'
 import { Route as FerramentasVetorizarRouteImport } from './routes/ferramentas.vetorizar'
 
@@ -35,6 +40,11 @@ const FerramentasArquivoDtfRoute = FerramentasArquivoDtfRouteImport.update({
   path: '/ferramentas/arquivo-dtf',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FerramentasCalculadoraRoute = FerramentasCalculadoraRouteImport.update({
+  id: '/ferramentas/calculadora',
+  path: '/ferramentas/calculadora',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FerramentasContracaoDeBordasRoute =
   FerramentasContracaoDeBordasRouteImport.update({
     id: '/ferramentas/contracao-de-bordas',
@@ -51,6 +61,17 @@ const FerramentasHalftoneRoute = FerramentasHalftoneRouteImport.update({
   path: '/ferramentas/halftone',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FerramentasLimpadorFundoRoute =
+  FerramentasLimpadorFundoRouteImport.update({
+    id: '/ferramentas/limpador-fundo',
+    path: '/ferramentas/limpador-fundo',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FerramentasMelhoradorRoute = FerramentasMelhoradorRouteImport.update({
+  id: '/ferramentas/melhorador',
+  path: '/ferramentas/melhorador',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FerramentasMockupRoute = FerramentasMockupRouteImport.update({
   id: '/ferramentas/mockup',
   path: '/ferramentas/mockup',
@@ -61,6 +82,17 @@ const FerramentasMoldurasRoute = FerramentasMoldurasRouteImport.update({
   path: '/ferramentas/molduras',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FerramentasOrcamentoRoute = FerramentasOrcamentoRouteImport.update({
+  id: '/ferramentas/orcamento',
+  path: '/ferramentas/orcamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FerramentasPontosFantasmasRoute =
+  FerramentasPontosFantasmasRouteImport.update({
+    id: '/ferramentas/pontos-fantasmas',
+    path: '/ferramentas/pontos-fantasmas',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const FerramentasRemoverFundoRoute = FerramentasRemoverFundoRouteImport.update({
   id: '/ferramentas/remover-fundo',
   path: '/ferramentas/remover-fundo',
@@ -76,11 +108,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/ferramentas/arquivo-dtf': typeof FerramentasArquivoDtfRoute
+  '/ferramentas/calculadora': typeof FerramentasCalculadoraRoute
   '/ferramentas/contracao-de-bordas': typeof FerramentasContracaoDeBordasRoute
   '/ferramentas/cor-spot': typeof FerramentasCorSpotRoute
   '/ferramentas/halftone': typeof FerramentasHalftoneRoute
+  '/ferramentas/limpador-fundo': typeof FerramentasLimpadorFundoRoute
+  '/ferramentas/melhorador': typeof FerramentasMelhoradorRoute
   '/ferramentas/mockup': typeof FerramentasMockupRoute
   '/ferramentas/molduras': typeof FerramentasMoldurasRoute
+  '/ferramentas/orcamento': typeof FerramentasOrcamentoRoute
+  '/ferramentas/pontos-fantasmas': typeof FerramentasPontosFantasmasRoute
   '/ferramentas/remover-fundo': typeof FerramentasRemoverFundoRoute
   '/ferramentas/vetorizar': typeof FerramentasVetorizarRoute
 }
@@ -88,11 +125,16 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/ferramentas/arquivo-dtf': typeof FerramentasArquivoDtfRoute
+  '/ferramentas/calculadora': typeof FerramentasCalculadoraRoute
   '/ferramentas/contracao-de-bordas': typeof FerramentasContracaoDeBordasRoute
   '/ferramentas/cor-spot': typeof FerramentasCorSpotRoute
   '/ferramentas/halftone': typeof FerramentasHalftoneRoute
+  '/ferramentas/limpador-fundo': typeof FerramentasLimpadorFundoRoute
+  '/ferramentas/melhorador': typeof FerramentasMelhoradorRoute
   '/ferramentas/mockup': typeof FerramentasMockupRoute
   '/ferramentas/molduras': typeof FerramentasMoldurasRoute
+  '/ferramentas/orcamento': typeof FerramentasOrcamentoRoute
+  '/ferramentas/pontos-fantasmas': typeof FerramentasPontosFantasmasRoute
   '/ferramentas/remover-fundo': typeof FerramentasRemoverFundoRoute
   '/ferramentas/vetorizar': typeof FerramentasVetorizarRoute
 }
@@ -101,11 +143,16 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/ferramentas/arquivo-dtf': typeof FerramentasArquivoDtfRoute
+  '/ferramentas/calculadora': typeof FerramentasCalculadoraRoute
   '/ferramentas/contracao-de-bordas': typeof FerramentasContracaoDeBordasRoute
   '/ferramentas/cor-spot': typeof FerramentasCorSpotRoute
   '/ferramentas/halftone': typeof FerramentasHalftoneRoute
+  '/ferramentas/limpador-fundo': typeof FerramentasLimpadorFundoRoute
+  '/ferramentas/melhorador': typeof FerramentasMelhoradorRoute
   '/ferramentas/mockup': typeof FerramentasMockupRoute
   '/ferramentas/molduras': typeof FerramentasMoldurasRoute
+  '/ferramentas/orcamento': typeof FerramentasOrcamentoRoute
+  '/ferramentas/pontos-fantasmas': typeof FerramentasPontosFantasmasRoute
   '/ferramentas/remover-fundo': typeof FerramentasRemoverFundoRoute
   '/ferramentas/vetorizar': typeof FerramentasVetorizarRoute
 }
@@ -115,11 +162,16 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/ferramentas/arquivo-dtf'
+    | '/ferramentas/calculadora'
     | '/ferramentas/contracao-de-bordas'
     | '/ferramentas/cor-spot'
     | '/ferramentas/halftone'
+    | '/ferramentas/limpador-fundo'
+    | '/ferramentas/melhorador'
     | '/ferramentas/mockup'
     | '/ferramentas/molduras'
+    | '/ferramentas/orcamento'
+    | '/ferramentas/pontos-fantasmas'
     | '/ferramentas/remover-fundo'
     | '/ferramentas/vetorizar'
   fileRoutesByTo: FileRoutesByTo
@@ -127,11 +179,16 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/ferramentas/arquivo-dtf'
+    | '/ferramentas/calculadora'
     | '/ferramentas/contracao-de-bordas'
     | '/ferramentas/cor-spot'
     | '/ferramentas/halftone'
+    | '/ferramentas/limpador-fundo'
+    | '/ferramentas/melhorador'
     | '/ferramentas/mockup'
     | '/ferramentas/molduras'
+    | '/ferramentas/orcamento'
+    | '/ferramentas/pontos-fantasmas'
     | '/ferramentas/remover-fundo'
     | '/ferramentas/vetorizar'
   id:
@@ -139,11 +196,16 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/ferramentas/arquivo-dtf'
+    | '/ferramentas/calculadora'
     | '/ferramentas/contracao-de-bordas'
     | '/ferramentas/cor-spot'
     | '/ferramentas/halftone'
+    | '/ferramentas/limpador-fundo'
+    | '/ferramentas/melhorador'
     | '/ferramentas/mockup'
     | '/ferramentas/molduras'
+    | '/ferramentas/orcamento'
+    | '/ferramentas/pontos-fantasmas'
     | '/ferramentas/remover-fundo'
     | '/ferramentas/vetorizar'
   fileRoutesById: FileRoutesById
@@ -152,11 +214,16 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
   FerramentasArquivoDtfRoute: typeof FerramentasArquivoDtfRoute
+  FerramentasCalculadoraRoute: typeof FerramentasCalculadoraRoute
   FerramentasContracaoDeBordasRoute: typeof FerramentasContracaoDeBordasRoute
   FerramentasCorSpotRoute: typeof FerramentasCorSpotRoute
   FerramentasHalftoneRoute: typeof FerramentasHalftoneRoute
+  FerramentasLimpadorFundoRoute: typeof FerramentasLimpadorFundoRoute
+  FerramentasMelhoradorRoute: typeof FerramentasMelhoradorRoute
   FerramentasMockupRoute: typeof FerramentasMockupRoute
   FerramentasMoldurasRoute: typeof FerramentasMoldurasRoute
+  FerramentasOrcamentoRoute: typeof FerramentasOrcamentoRoute
+  FerramentasPontosFantasmasRoute: typeof FerramentasPontosFantasmasRoute
   FerramentasRemoverFundoRoute: typeof FerramentasRemoverFundoRoute
   FerramentasVetorizarRoute: typeof FerramentasVetorizarRoute
 }
@@ -184,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FerramentasArquivoDtfRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ferramentas/calculadora': {
+      id: '/ferramentas/calculadora'
+      path: '/ferramentas/calculadora'
+      fullPath: '/ferramentas/calculadora'
+      preLoaderRoute: typeof FerramentasCalculadoraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ferramentas/contracao-de-bordas': {
       id: '/ferramentas/contracao-de-bordas'
       path: '/ferramentas/contracao-de-bordas'
@@ -205,6 +279,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FerramentasHalftoneRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ferramentas/limpador-fundo': {
+      id: '/ferramentas/limpador-fundo'
+      path: '/ferramentas/limpador-fundo'
+      fullPath: '/ferramentas/limpador-fundo'
+      preLoaderRoute: typeof FerramentasLimpadorFundoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/melhorador': {
+      id: '/ferramentas/melhorador'
+      path: '/ferramentas/melhorador'
+      fullPath: '/ferramentas/melhorador'
+      preLoaderRoute: typeof FerramentasMelhoradorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ferramentas/mockup': {
       id: '/ferramentas/mockup'
       path: '/ferramentas/mockup'
@@ -217,6 +305,20 @@ declare module '@tanstack/react-router' {
       path: '/ferramentas/molduras'
       fullPath: '/ferramentas/molduras'
       preLoaderRoute: typeof FerramentasMoldurasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/orcamento': {
+      id: '/ferramentas/orcamento'
+      path: '/ferramentas/orcamento'
+      fullPath: '/ferramentas/orcamento'
+      preLoaderRoute: typeof FerramentasOrcamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas/pontos-fantasmas': {
+      id: '/ferramentas/pontos-fantasmas'
+      path: '/ferramentas/pontos-fantasmas'
+      fullPath: '/ferramentas/pontos-fantasmas'
+      preLoaderRoute: typeof FerramentasPontosFantasmasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ferramentas/remover-fundo': {
@@ -240,11 +342,16 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
   FerramentasArquivoDtfRoute: FerramentasArquivoDtfRoute,
+  FerramentasCalculadoraRoute: FerramentasCalculadoraRoute,
   FerramentasContracaoDeBordasRoute: FerramentasContracaoDeBordasRoute,
   FerramentasCorSpotRoute: FerramentasCorSpotRoute,
   FerramentasHalftoneRoute: FerramentasHalftoneRoute,
+  FerramentasLimpadorFundoRoute: FerramentasLimpadorFundoRoute,
+  FerramentasMelhoradorRoute: FerramentasMelhoradorRoute,
   FerramentasMockupRoute: FerramentasMockupRoute,
   FerramentasMoldurasRoute: FerramentasMoldurasRoute,
+  FerramentasOrcamentoRoute: FerramentasOrcamentoRoute,
+  FerramentasPontosFantasmasRoute: FerramentasPontosFantasmasRoute,
   FerramentasRemoverFundoRoute: FerramentasRemoverFundoRoute,
   FerramentasVetorizarRoute: FerramentasVetorizarRoute,
 }

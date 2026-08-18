@@ -20,8 +20,10 @@ import {
  * `slug` is the identifier the production app passes as `?tool=<slug>`; we keep it
  * so the two can be cross-referenced, but our own URLs are file-based routes.
  *
- * Tools we haven't built yet are marked `built: false` — the sidebar still lists
- * them, in the real order, so the navigation doesn't silently diverge.
+ * Every tool here is built and open: the product is in validation, so nothing is
+ * gated behind a plan or a login. `built` stays on the type because the sidebar
+ * lists the catalogue in the real app's order, and a tool added to that order
+ * before it exists should render as pending rather than as a dead link.
  */
 export type Tool = {
   slug: string;
@@ -29,7 +31,7 @@ export type Tool = {
   title: string;
   subtitle: string;
   icon: LucideIcon;
-  /** Only "NOVO" is used: there are no plans, so PRO/GRÁTIS markers would lie. */
+  /** Only "NOVO" is used: everything is free, so PRO/GRÁTIS markers would lie. */
   badge?: "NOVO";
   to?: string;
   built: boolean;
@@ -99,7 +101,8 @@ export const TOOLS: Tool[] = [
     title: "Limpador de Fundo",
     subtitle: "Limpe restos de fundo e manchas sem comer a arte.",
     icon: Sparkles,
-    built: false,
+    to: "/ferramentas/limpador-fundo",
+    built: true,
   },
   {
     slug: "pontos-fantasmas",
@@ -107,7 +110,8 @@ export const TOOLS: Tool[] = [
     title: "Removedor de Pontos Fantasmas",
     subtitle: "Elimine pontos soltos que aparecem na prensa.",
     icon: Bug,
-    built: false,
+    to: "/ferramentas/pontos-fantasmas",
+    built: true,
   },
   {
     slug: "cor-spot",
@@ -133,7 +137,8 @@ export const TOOLS: Tool[] = [
     title: "Melhorador de Imagem Pro",
     subtitle: "Aumente a escala e reforce a nitidez de artes em lote.",
     icon: TrendingUp,
-    built: false,
+    to: "/ferramentas/melhorador",
+    built: true,
   },
   {
     slug: "calculadora",
@@ -141,7 +146,8 @@ export const TOOLS: Tool[] = [
     title: "Calculadora de Preços",
     subtitle: "Calcule custo, margem e preço de venda por peça.",
     icon: Calculator,
-    built: false,
+    to: "/ferramentas/calculadora",
+    built: true,
   },
   {
     slug: "orcamento",
@@ -149,7 +155,8 @@ export const TOOLS: Tool[] = [
     title: "Orçamento PRO",
     subtitle: "Monte orçamentos com a sua identidade e envie em PDF ou WhatsApp.",
     icon: Receipt,
-    built: false,
+    to: "/ferramentas/orcamento",
+    built: true,
   },
 ];
 

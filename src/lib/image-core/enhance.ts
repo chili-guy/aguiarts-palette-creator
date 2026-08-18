@@ -78,3 +78,74 @@ export function sharpen(image: RGBAImage, amount: number): RGBAImage {
 
   return { data: out, width, height };
 }
+
+/**
+ * Presets behind the "Melhorador de Imagem Pro" modes.
+ *
+ * "rapida" is the quick pass: the browser has already resampled the art up, so
+ * all that is missing is the bite the interpolation smoothed away. "super-hd"
+ * pushes further for artwork that arrived genuinely low-resolution — a second
+ * sharpening pass over a wider radius rebuilds edges the first one cannot
+ * reach, with a small contrast and saturation lift to offset the flattening
+ * that upscaling causes.
+ */
+export type EnhanceMode = "rapida" | "super-hd";
+
+export interface EnhanceOptions {
+  mode: EnhanceMode;
+  /** 0..100 on top of the mode's own amount, for manual override. */
+  extraSharpen?: number;
+}
+
+/**
+ * Widens `sharpen` to a two-pixel radius.
+ *
+ * The 3x3 kernel only sees immediate neighbours, so on an image scaled 3-4x
+ * every real edge is several pixels wide and sits entirely inside the kernel's
+ * blind spot — sharpening it just adds grain. Sampling two pixels out puts the
+ * kernel back across the edge.
+ */
+export function sharpenWide(image: RGBAImage, amount: number): RGBAImage {
+  if (amount <= 0) {
+    return { data: new Uint8ClampedArray(image.data), width: image.width, height: image.height };
+  }
+  const { width, height, data: src } = image;
+  const k = amount / 100;
+  const center = 1 + 4 * k;
+  const neighbor = -k;
+  const out = new Uint8ClampedArray(src.length);
+
+  const at = (x: number, y: number, c: number) => {
+    const cx = Math.min(width - 1, Math.max(0, x));
+    const cy = Math.min(height - 1, Math.max(0, y));
+    return src[(cy * width + cx) * 4 + c]!;
+  };
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      for (let c = 0; c < 3; c++) {
+        out[idx + c] =
+          center * at(x, y, c) +
+          neighbor * at(x - 2, y, c) +
+          neighbor * at(x + 2, y, c) +
+          neighbor * at(x, y - 2, c) +
+          neighbor * at(x, y + 2, c);
+      }
+      out[idx + 3] = src[idx + 3]!;
+    }
+  }
+  return { data: out, width, height };
+}
+
+/** Runs the mode's chain over an image that has already been scaled up. */
+export function enhance(image: RGBAImage, options: EnhanceOptions): RGBAImage {
+  const extra = options.extraSharpen ?? 0;
+  if (options.mode === "rapida") {
+    return sharpen(image, Math.min(100, 28 + extra));
+  }
+  let out = sharpenWide(image, Math.min(100, 30 + extra * 0.5));
+  out = sharpen(out, Math.min(100, 22 + extra * 0.5));
+  out = adjustContrast(out, 6);
+  return adjustSaturation(out, 8);
+}

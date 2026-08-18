@@ -5,6 +5,8 @@ export * from "./halftone";
 export * from "./spot-color";
 export * from "./frames";
 export * from "./choke";
+export * from "./bg-clean";
+export * from "./despeckle";
 export * from "./vectorize";
 export * from "./export/dpi";
 export * from "./export/pdf";
