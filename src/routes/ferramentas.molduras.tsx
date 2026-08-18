@@ -184,7 +184,9 @@ function FramesTool() {
                     <button
                       key={f.style}
                       type="button"
-                      title={f.hint}
+                      title={`${f.label} — ${f.hint}`}
+                      aria-label={`Moldura ${f.number}, ${f.label}`}
+                      aria-pressed={on}
                       onClick={() => setStyle(f.style)}
                       className={`relative aspect-square rounded-xl border p-1 transition-colors ${
                         on
