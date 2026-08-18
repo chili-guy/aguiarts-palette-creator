@@ -179,10 +179,9 @@ export function Hero() {
             variants={fadeUp(0.45)}
             className="relative mx-auto px-6 text-center font-display text-4xl leading-[1.05] font-bold tracking-tight text-primary-foreground sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            O pré-impressão
-            <br /> da sua gráfica
+            Transforme seu arquivo.
             <br />
-            <span className="text-accent">resolvido em minutos</span>
+            <span className="text-accent">Acelere sua produção.</span>
           </motion.h1>
         </div>
 
@@ -194,8 +193,8 @@ export function Hero() {
             variants={fadeUp(0.6)}
             className="max-w-[280px] text-center text-sm leading-relaxed text-primary-foreground/60 md:mr-auto md:text-left"
           >
-            Serviços digitais para gráficas e estamparias: tratamento de arte, halftone, vetorização
-            e montagem de folha DTF prontos pra máquina.
+            O Printzy Lab reúne as ferramentas que você precisa para preparar, transformar e
+            finalizar suas artes para impressão — tudo em um único fluxo online.
           </motion.p>
 
           <motion.div
@@ -204,15 +203,18 @@ export function Hero() {
             variants={fadeUp(0.7)}
             className="flex flex-col items-center gap-4"
           >
-            <span className="font-display text-lg font-medium text-primary-foreground">
-              Comece agora
-            </span>
             <a
               href="#planos"
               className="clip-cut group inline-flex w-full max-w-[280px] items-center justify-center gap-2 bg-accent py-3.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90"
             >
-              Criar conta grátis
+              Começar gratuitamente
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </a>
+            <a
+              href="#ferramentas"
+              className="clip-cut inline-flex w-full max-w-[280px] items-center justify-center bg-primary-foreground/20 py-3.5 text-sm font-semibold text-primary-foreground backdrop-blur transition-colors hover:bg-primary-foreground/30"
+            >
+              Conhecer as ferramentas
             </a>
           </motion.div>
 

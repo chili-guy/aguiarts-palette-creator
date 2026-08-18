@@ -23,6 +23,10 @@ import {
   Shirt,
   Shrink,
   Check,
+  Printer,
+  Store,
+  Truck,
+  PackageCheck,
 } from "lucide-react";
 import { Hero } from "@/components/hero";
 import { Logo } from "@/components/logo";
@@ -53,45 +57,45 @@ const tools = [
   {
     icon: Grid3x3,
     name: "Halftone DTF/DTG",
-    desc: "Retícula calibrada para sua máquina: menos tinta por peça e traço limpo na prensa.",
+    desc: "Transforme imagens degradê em retículas prontas para impressão.",
     href: "/ferramentas/halftone",
   },
   {
     icon: Eraser,
     name: "Limpador de Fundo",
-    desc: "Arte do cliente chega com fundo sujo e sai recortada, sem retrabalho do setor de arte.",
+    desc: "Remova fundos de forma rápida e precisa.",
     href: "/ferramentas/remover-fundo",
   },
   {
-    tag: "NOVO",
     icon: PenTool,
+    tag: "NOVO",
     name: "Vetorizador PRO",
-    desc: "Logo em JPG vira vetor imprimível em qualquer formato, do adesivo ao banner.",
+    desc: "Transforme imagens em arquivos vetoriais editáveis.",
     href: "/ferramentas/vetorizar",
   },
   {
-    tag: "NOVO",
     icon: Shirt,
+    tag: "NOVO",
     name: "Mockup Studio",
-    desc: "Aprove a arte com o cliente antes de rodar e evite reimpressão por engano.",
+    desc: "Apresente sua arte aplicada antes mesmo de produzir.",
     href: "/ferramentas/mockup",
   },
   {
     icon: Frame,
     name: "Molduras PRO",
-    desc: "Acabamentos e bordas prontos para agregar valor ao pedido sem hora extra de criação.",
+    desc: "Adicione acabamentos e elementos finais à composição.",
     href: "/ferramentas/molduras",
   },
   {
     icon: Palette,
     name: "Cor Spot PRO",
-    desc: "Separação de cores especiais com precisão para fechar o job certo na primeira tiragem.",
+    desc: "Prepare cores especiais para processos de impressão.",
     href: "/ferramentas/cor-spot",
   },
   {
     icon: Shrink,
     name: "Contração de Bordas",
-    desc: "Fim do halo branco no transfer: acabamento de gráfica profissional em toda peça.",
+    desc: "Remova contornos e evite problemas na aplicação.",
     href: "/ferramentas/contracao-de-bordas",
   },
   {
@@ -99,6 +103,45 @@ const tools = [
     name: "Arquivo DTF",
     desc: "Monte a folha com encaixe otimizado, régua e sangria — aproveite cada metro de filme.",
     href: "/ferramentas/arquivo-dtf",
+  },
+];
+
+const offerings = [
+  {
+    icon: Shirt,
+    tag: "NOVO",
+    name: "Camisetas lisas 100% algodão",
+    desc: "Compre camisetas lisas em malha 100% algodão com preço de atacado.",
+  },
+  {
+    icon: Shirt,
+    tag: "NOVO",
+    name: "Camisetas lisas Dryfit",
+    desc: "Compre camisetas lisas em dryfit com preço de atacado.",
+  },
+  {
+    icon: Printer,
+    tag: "NOVO",
+    name: "Impressão DTF",
+    desc: "Imprima suas folhas de DTF com qualidade premium e preço de atacado.",
+  },
+  {
+    icon: Store,
+    tag: "BREVE",
+    name: "Site/loja própria",
+    desc: "Crie sua marca e receba sua loja pronta e configurada para vender em todo o Brasil.",
+  },
+  {
+    icon: Truck,
+    tag: "BREVE",
+    name: "Dropshipping",
+    desc: "Tenha acesso ao nosso catálogo com mais de 5 mil produtos e venda em todos os marketplaces nacionais.",
+  },
+  {
+    icon: PackageCheck,
+    tag: "BREVE",
+    name: "Print on Demand",
+    desc: "Compre camisetas prontas já estampadas e envie direto para o seu cliente.",
   },
 ];
 
@@ -123,7 +166,7 @@ const steps = [
 const examples = [
   {
     name: "Halftone DTF/DTG",
-    desc: "A arte do cliente vira retícula calibrada: menos consumo de tinta por tiragem.",
+    desc: "A arte com efeito de retícula calibrada: economize tinta e ganhe sofisticação e leveza na camiseta.",
     before: exHalftoneBefore,
     after: exHalftoneAfter,
     beforeAlt: "Ilustração de lobo geométrico colorida antes do halftone",
@@ -139,8 +182,8 @@ const examples = [
     checkered: true,
   },
   {
-    name: "Vetorizador PRO",
     tag: "NOVO",
+    name: "Vetorizador PRO",
     desc: "Logo em baixa resolução vira vetor pronto para qualquer formato de impressão.",
     before: exVectorBefore,
     after: exVectorAfter,
@@ -148,9 +191,9 @@ const examples = [
     afterAlt: "Mesmo logo vetorizado com bordas nítidas",
   },
   {
-    name: "Mockup Studio",
     tag: "NOVO",
-    desc: "Prova visual para o cliente aprovar antes de a gráfica rodar o pedido.",
+    name: "Mockup Studio",
+    desc: "Prova visual para aprovar antes de publicar ou rodar o pedido.",
     before: exMockupBefore,
     after: exMockupAfter,
     beforeAlt: "Arte de foguete isolada em fundo branco",
@@ -176,24 +219,24 @@ const examples = [
 
 const benefits = [
   {
-    kicker: "MAIS PEDIDOS/DIA",
-    title: "Fila de arte destravada",
-    desc: "O que travava no setor de criação sai pronto em minutos, direto do navegador.",
+    kicker: "100% ONLINE",
+    title: "Trabalhe de qualquer lugar",
+    desc: "Cadastre-se, envie seu arquivo e comece a produzir. Sem instalações e sem processos complicados.",
   },
   {
-    kicker: "MENOS REFUGO",
-    title: "Arquivo certo na primeira tiragem",
-    desc: "Perfis calibrados para DTF e DTG reduzem reimpressão, desperdício de filme e tinta.",
+    kicker: "FLUXO INTELIGENTE",
+    title: "Menos etapas. Mais produção.",
+    desc: "Automatize tarefas repetitivas e transforme horas de edição em poucos cliques.",
   },
   {
-    kicker: "SEM LIMITE",
-    title: "Volume de gráfica de verdade",
-    desc: "No plano PRO sua equipe exporta quantos jobs precisar, todos os dias.",
+    kicker: "FEITO PARA IMPRESSÃO",
+    title: "Ferramentas que entendem seu processo",
+    desc: "Halftone, vetorização, preparação de arquivos, mockups e muito mais, pensados para quem trabalha com impressão.",
   },
   {
-    kicker: "UM FLUXO SÓ",
-    title: "Do orçamento à folha final",
-    desc: "Tratamento, vetor, mockup, molduras e montagem DTF sem trocar de software.",
+    kicker: "TUDO EM UM SÓ LUGAR",
+    title: "Seu fluxo. Uma plataforma.",
+    desc: "Pare de ficar pulando entre programas e ferramentas. Tenha o que você precisa para produzir dentro do Printzy Lab.",
   },
 ];
 
@@ -240,23 +283,27 @@ const plans = [
 const faqs = [
   {
     q: "Preciso instalar algum programa na gráfica?",
-    a: "Não. Tudo roda no navegador de qualquer computador do setor de arte. Basta criar uma conta.",
+    a: "Não. Tudo roda no navegador de qualquer computador do setor de arte, sem instalar nada.",
+  },
+  {
+    q: "Preciso criar conta para usar?",
+    a: "Não. Durante a validação todas as ferramentas estão abertas: é só abrir a ferramenta, enviar o arquivo e baixar o resultado.",
   },
   {
     q: "Atende DTF, DTG e serigrafia?",
     a: "Sim. As ferramentas foram calibradas para esses fluxos, com exports prontos para o RIP e para a prensa.",
   },
   {
+    q: "Tem limite de exports?",
+    a: "Não. Nesta fase não há limite de downloads e nenhuma ferramenta está bloqueada — os planos abaixo são a previsão de preço para quando o produto abrir ao público.",
+  },
+  {
     q: "Mais de uma pessoa pode usar?",
-    a: "Sim. A equipe do setor de arte pode trabalhar na mesma conta PRO, com exports ilimitados.",
+    a: "Sim. Qualquer computador do setor de arte pode abrir e trabalhar ao mesmo tempo.",
   },
   {
-    q: "Qual a diferença do grátis para o PRO?",
-    a: "O grátis libera as ferramentas básicas e 5 exports PRO. O PRO libera tudo, com downloads ilimitados.",
-  },
-  {
-    q: "Posso cancelar quando quiser?",
-    a: "Sim. O mensal pode ser cancelado a qualquer momento e o anual garante o melhor preço.",
+    q: "Meus arquivos vão para algum servidor?",
+    a: "Não. O processamento acontece inteiro no seu navegador — a imagem nunca sai da máquina.",
   },
 ];
 
@@ -293,6 +340,9 @@ function Index() {
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a className="transition-colors hover:text-foreground" href="#ferramentas">
               Ferramentas
+            </a>
+            <a className="transition-colors hover:text-foreground" href="#produtos">
+              Produtos
             </a>
             <a className="transition-colors hover:text-foreground" href="#exemplos">
               Exemplos
@@ -356,13 +406,13 @@ function Index() {
           variants={stagger}
           className="mx-auto max-w-6xl px-5 py-20"
         >
-          <Eyebrow>POR QUE A PRINTZY</Eyebrow>
+          <Eyebrow>POR QUE O PRINTZY LAB</Eyebrow>
           <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Sua gráfica entrega mais, com menos refugo
+            Produza mais. Edite menos. Cresça mais.
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            A Printzy resolve a etapa que mais atrasa pedido: o tratamento do arquivo que o cliente
-            manda.
+            Ferramentas inteligentes para transformar arquivos brutos em artes prontas para produção
+            — direto no navegador, sem complicação e sem depender de programas pesados.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {benefits.map((b) => (
@@ -386,11 +436,10 @@ function Index() {
           <div className="mx-auto max-w-6xl px-5 py-20">
             <Eyebrow>FERRAMENTAS</Eyebrow>
             <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Serviços para cada etapa da sua produção gráfica
+              Para preparar, transformar e finalizar.
             </h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              Do arquivo que o cliente envia até a folha fechada para o RIP — sem depender de
-              software caro na bancada.
+              Feito para designers, estamparias, profissionais de DTF, DTG e personalização.
             </p>
             <motion.div
               initial="hidden"
@@ -423,15 +472,56 @@ function Index() {
           </div>
         </section>
 
+        {/* Produtos e serviços */}
+        <section id="produtos" className="mx-auto max-w-6xl px-5 py-20">
+          <Eyebrow>PRODUTOS/SERVIÇOS</Eyebrow>
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
+            Da arte pronta à peça na mão do seu cliente
+          </h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">
+            Além das ferramentas, o Printzy Lab fecha o ciclo: peça em branco, impressão e logística
+            com preço de atacado.
+          </p>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {offerings.map((o) => {
+              const soon = o.tag === "BREVE";
+              return (
+                <motion.div
+                  key={o.name}
+                  variants={fadeUp}
+                  className={`h-full rounded-xl border border-border bg-card p-6 shadow-card ${
+                    soon ? "opacity-70" : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="grid size-9 place-items-center rounded-md bg-secondary text-foreground">
+                      <o.icon className="size-4" />
+                    </span>
+                    <Tag>{o.tag}</Tag>
+                  </div>
+                  <h3 className="mt-4 font-display text-lg font-semibold">{o.name}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{o.desc}</p>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </section>
+
         {/* Exemplos antes e depois */}
         <section id="exemplos" className="mx-auto max-w-6xl px-5 py-20">
           <Eyebrow>ANTES / DEPOIS</Eyebrow>
           <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
-            O arquivo que chega x o arquivo que vai para a máquina
+            Visualize a edição da imagem em tempo real
           </h2>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Arraste o cursor e compare: de um lado o material bruto do cliente, do outro o arquivo
-            tratado e pronto para produção.
+            Arraste o cursor e compare: de um lado a arte bruta, do outro a arte tratada pronta para
+            venda e produção.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {examples.map((ex) => (
@@ -463,11 +553,17 @@ function Index() {
           <div className="mx-auto max-w-6xl px-5 py-20">
             <Eyebrow>PLANOS</Eyebrow>
             <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Planos que cabem no volume da sua gráfica
+              Um ecossistema de ferramentas e serviços completo para quem vive de impressão
             </h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              Comece de graça e teste com os próximos pedidos. Quando o volume crescer, o PRO libera
-              exports ilimitados.
+              O Printzy Lab transforma etapas demoradas e repetitivas em processos simples, rápidos
+              e automatizados.
+            </p>
+            {/* The prices are the plan for launch. Nothing is charged or limited
+                yet, and the cards below would otherwise read as an active
+                paywall to anyone testing the product. */}
+            <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent">
+              Em validação — todas as ferramentas liberadas, sem conta e sem limite de exports.
             </p>
             <div className="mt-10 grid gap-5 md:grid-cols-3">
               {plans.map((p) => (
@@ -592,7 +688,7 @@ function Index() {
         <div className="mx-auto max-w-6xl px-5 py-14">
           <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
             <div>
-              <Logo />
+              <Logo variant="mono" />
               <p className="mt-4 max-w-xs text-sm text-primary-foreground/60">
                 Pré-impressão para gráficas e estamparias — halftone, vetorização, mockup e montagem
                 de DTF, direto do navegador.
