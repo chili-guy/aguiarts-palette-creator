@@ -1,15 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { halftone, type RGBAImage } from "@/lib/image-core";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
-import { CanvasExportButtons } from "@/components/canvas-export-buttons";
+import {
+  DEFAULT_LEVELS,
+  FUSION_STRENGTH,
+  PHOTOSHOP_ACTION,
+  gridSpacing,
+  halftone,
+  lpiToLpc,
+  type ColorMode,
+  type GarmentTone,
+  type RGBAImage,
+  type ToneCurve,
+} from "@/lib/image-core";
 import { ToolPageShell } from "@/components/tool-page-shell";
-import { drawRGBAImage, imageToRGBAImage, loadImageFile } from "@/lib/canvas-tools";
+import {
+  ControlGroup,
+  Hint,
+  OptionPills,
+  PreviewPlaceholder,
+  PreviewStage,
+  PrimaryAction,
+  SliderRow,
+  ToolLayout,
+} from "@/components/tool-ui";
+import { drawRGBAImage, loadImageFile, resampleImageToRGBA } from "@/lib/canvas-tools";
+import { downloadCanvasAsPdf } from "@/lib/export";
+import { downloadCanvasAsPng } from "@/lib/canvas-tools";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export const Route = createFileRoute("/ferramentas/halftone")({
@@ -17,79 +33,133 @@ export const Route = createFileRoute("/ferramentas/halftone")({
   component: HalftoneTool,
 });
 
-const ANGLE_PRESETS = [
-  { label: "Amarelo (0°)", value: 0 },
-  { label: "Ciano (15°)", value: 15 },
-  { label: "Preto (45°)", value: 45 },
-  { label: "Magenta (75°)", value: 75 },
-  { label: "Camiseta escura (22°)", value: 22 },
-];
+/**
+ * The screen is defined in print units, so the art is resampled to the chosen
+ * sheet size and DPI before the dots are generated — same order as the
+ * Photoshop action (set resolution, then convert to Bitmap/Halftone Screen).
+ */
+const SHEETS = {
+  a4: { label: "A4", cm: [21, 29.7] },
+  a3: { label: "A3", cm: [29.7, 42] },
+  a2: { label: "A2", cm: [42, 59.4] },
+} as const;
+
+type ArtSize = "original" | keyof typeof SHEETS | "custom";
+
+/** Above ~40 MP an RGBA buffer starts costing more RAM than a browser tab has. */
+const MAX_OUTPUT_PX = 40_000_000;
+/** The preview is screened at reduced size with a matching grid, so it reads the same. */
+const PREVIEW_MAX_EDGE = 1400;
+
+const CM_PER_INCH = 2.54;
 
 function hexToRgb(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-function ToolSlider({
-  label,
-  value,
-  min,
-  max,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <Label>{label}</Label>
-        <span className="text-sm text-muted-foreground tabular-nums">{value}</span>
-      </div>
-      <Slider
-        value={[value]}
-        min={min}
-        max={max}
-        step={1}
-        onValueChange={(v) => onChange(Array.isArray(v) ? (v[0] ?? 0) : v)}
-      />
-    </div>
-  );
-}
-
 function HalftoneTool() {
-  const [original, setOriginal] = useState<RGBAImage | null>(null);
+  const [source, setSource] = useState<HTMLImageElement | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [cellSize, setCellSize] = useState(10);
-  const [angle, setAngle] = useState(45);
-  const [inkColor, setInkColor] = useState("#000000");
-  const [swatch, setSwatch] = useState("#ffffff");
   const [error, setError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState<null | "png" | "pdf">(null);
+
+  // Everything below defaults to the values read off Rodrigo's verified action.
+  const [garment, setGarment] = useState<GarmentTone>("dark");
+  const [artSize, setArtSize] = useState<ArtSize>("original");
+  const [customCm, setCustomCm] = useState({ w: 30, h: 40 });
+  const [dpi, setDpi] = useState<number>(PHOTOSHOP_ACTION.dpi);
+  const [lpi, setLpi] = useState<number>(PHOTOSHOP_ACTION.lpi);
+  const [angle, setAngle] = useState<number>(PHOTOSHOP_ACTION.angle);
+  const [dotAspect, setDotAspect] = useState<number>(PHOTOSHOP_ACTION.dotAspect);
+  const [strength, setStrength] = useState(1.25);
+  const [toneCurve, setToneCurve] = useState<ToneCurve>("area");
+  const [colorMode, setColorMode] = useState<ColorMode>("mono");
+  const [inkColor, setInkColor] = useState("#ffffff");
+  const [fabricColor, setFabricColor] = useState("#111111");
+  const [black, setBlack] = useState(DEFAULT_LEVELS.black);
+  const [white, setWhite] = useState(DEFAULT_LEVELS.white);
+  const [gamma, setGamma] = useState(DEFAULT_LEVELS.gamma);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Every pixel is revisited on each render — debounce so dragging the cell
-  // size or picking an ink color doesn't recompute on every tick.
-  const debouncedCellSize = useDebouncedValue(cellSize, 150);
-  const debouncedInkColor = useDebouncedValue(inkColor, 150);
-  const isPending = debouncedCellSize !== cellSize || debouncedInkColor !== inkColor;
+  /** Output pixel size for the chosen art size, clamped to what fits in memory. */
+  const output = useMemo(() => {
+    if (!source) return null;
+    const nw = source.naturalWidth;
+    const nh = source.naturalHeight;
 
-  const processed = useMemo<RGBAImage | null>(() => {
-    if (!original) return null;
-    return halftone(original, {
-      cellSize: debouncedCellSize,
+    let w = nw;
+    let h = nh;
+    if (artSize !== "original") {
+      const [cmW, cmH] =
+        artSize === "custom"
+          ? [Math.max(1, customCm.w), Math.max(1, customCm.h)]
+          : SHEETS[artSize].cm;
+      // Fit the art inside the sheet rather than letterboxing it, so the export
+      // is the artwork itself at print size with no transparent margin.
+      const boxW = (cmW / CM_PER_INCH) * dpi;
+      const boxH = (cmH / CM_PER_INCH) * dpi;
+      const k = Math.min(boxW / nw, boxH / nh);
+      w = nw * k;
+      h = nh * k;
+    }
+
+    const clamp = Math.min(1, Math.sqrt(MAX_OUTPUT_PX / (w * h)));
+    return {
+      width: Math.max(1, Math.round(w * clamp)),
+      height: Math.max(1, Math.round(h * clamp)),
+      clamped: clamp < 1,
+    };
+  }, [source, artSize, customCm, dpi]);
+
+  const options = useMemo(
+    () => ({
+      lpi,
+      dpi,
       angle,
-      inkColor: hexToRgb(debouncedInkColor),
-    });
-  }, [original, debouncedCellSize, angle, debouncedInkColor]);
+      dotAspect,
+      strength,
+      garment,
+      toneCurve,
+      colorMode,
+      levels: { black, white, gamma },
+      inkColor: hexToRgb(inkColor),
+    }),
+    [
+      lpi,
+      dpi,
+      angle,
+      dotAspect,
+      strength,
+      garment,
+      toneCurve,
+      colorMode,
+      black,
+      white,
+      gamma,
+      inkColor,
+    ],
+  );
+
+  // Screening touches every pixel nine times per channel; debounce so dragging
+  // a slider doesn't queue a full re-render on every tick.
+  const debounced = useDebouncedValue(options, 180);
+  const isPending = debounced !== options;
+
+  const preview = useMemo<RGBAImage | null>(() => {
+    if (!source || !output) return null;
+    const scale = Math.min(1, PREVIEW_MAX_EDGE / Math.max(output.width, output.height));
+    const w = Math.max(1, Math.round(output.width * scale));
+    const h = Math.max(1, Math.round(output.height * scale));
+    // The same `scale` goes into the screen, so the preview's dots land exactly
+    // where the full-resolution export's will.
+    return halftone(resampleImageToRGBA(source, w, h), { ...debounced, scale });
+  }, [source, output, debounced]);
 
   useEffect(() => {
-    if (processed && canvasRef.current) {
-      drawRGBAImage(canvasRef.current, processed);
-    }
-  }, [processed]);
+    if (preview && canvasRef.current) drawRGBAImage(canvasRef.current, preview);
+  }, [preview]);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -97,115 +167,357 @@ function HalftoneTool() {
     setError(null);
     try {
       const img = await loadImageFile(file);
-      setOriginal(imageToRGBAImage(img));
+      setSource(img);
       setFileName(file.name);
     } catch {
       setError("Não foi possível carregar essa imagem.");
     }
   }
 
+  /** Renders the screen once at full output resolution, for export only. */
+  function renderFullSize(): HTMLCanvasElement {
+    if (!source || !output) throw new Error("no image");
+    const canvas = document.createElement("canvas");
+    drawRGBAImage(
+      canvas,
+      halftone(resampleImageToRGBA(source, output.width, output.height), options),
+    );
+    return canvas;
+  }
+
+  async function handleExport(kind: "png" | "pdf") {
+    if (!source || !output) return;
+    setExporting(kind);
+    setError(null);
+    // Yield first so the button can paint its busy state before the main thread
+    // disappears into a full-resolution render.
+    await new Promise((r) => setTimeout(r, 0));
+    try {
+      const canvas = renderFullSize();
+      if (kind === "png") downloadCanvasAsPng(canvas, `${baseName}.png`);
+      else await downloadCanvasAsPdf(canvas, `${baseName}.pdf`, dpi);
+    } catch {
+      setError("Não foi possível gerar o arquivo nessa resolução. Tente um DPI menor.");
+    } finally {
+      setExporting(null);
+    }
+  }
+
+  function restoreAction() {
+    setLpi(PHOTOSHOP_ACTION.lpi);
+    setAngle(PHOTOSHOP_ACTION.angle);
+    setDpi(PHOTOSHOP_ACTION.dpi);
+    setDotAspect(PHOTOSHOP_ACTION.dotAspect);
+    setStrength(1.25);
+    setToneCurve("area");
+    setBlack(DEFAULT_LEVELS.black);
+    setWhite(DEFAULT_LEVELS.white);
+    setGamma(DEFAULT_LEVELS.gamma);
+  }
+
   const baseName = `${fileName?.replace(/\.[^/.]+$/, "") || "imagem"}-halftone`;
+  const spacing = gridSpacing(dpi, lpi);
+  const status = output
+    ? `${output.width} × ${output.height} px • ${dpi} DPI • ${lpi} LPI (${lpiToLpc(lpi).toFixed(2)} l/cm) • ponto a cada ${spacing.toFixed(2)} px`
+    : "Sem imagem";
 
   return (
     <ToolPageShell
-      title="Halftone DTF/DTG"
-      subtitle="Retícula calibrada para sua máquina: menos tinta por peça e traço limpo na prensa."
+      title="Halftone DTF Pro"
+      subtitle="Crie halftone e tramados para DTF/DTG em poucos cliques."
     >
-      <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Pré-visualização</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div
-              className="relative flex min-h-80 items-center justify-center rounded-md border border-dashed p-4"
-              style={{ backgroundColor: swatch }}
-            >
-              {processed ? (
-                <canvas
-                  ref={canvasRef}
-                  role="img"
-                  aria-label="Pré-visualização"
-                  className={`max-h-[60vh] max-w-full rounded-sm shadow-sm transition-opacity ${isPending ? "opacity-50" : ""}`}
+      <ToolLayout
+        controls={
+          <>
+            <ControlGroup step="01" label="Imagem">
+              <label className="block cursor-pointer rounded-xl border border-border-strong bg-accent/10 px-4 py-4 text-center transition-colors hover:bg-accent/15">
+                <span className="block text-sm font-bold">Selecionar imagem</span>
+                <span className="block text-xs text-muted-foreground">PNG, JPG ou WebP</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="sr-only"
                 />
-              ) : (
-                <p className="rounded bg-background/80 px-2 py-1 text-sm text-muted-foreground">
-                  Envie uma imagem para começar
+              </label>
+              <div className="rounded-xl border border-border bg-secondary px-3 py-2.5">
+                <p className="text-xs font-bold">{fileName ?? "Nenhuma imagem carregada"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {source
+                    ? `${source.naturalWidth} × ${source.naturalHeight} px`
+                    : "PNG com fundo transparente dá o melhor resultado"}
+                </p>
+              </div>
+              {error && <p className="text-xs text-destructive">{error}</p>}
+            </ControlGroup>
+
+            <ControlGroup step="02" label="Tipo de peça">
+              <OptionPills<GarmentTone>
+                columns={1}
+                value={garment}
+                onChange={setGarment}
+                options={[
+                  { value: "dark", label: "Peça escura", note: "a tinta pinta o claro da arte" },
+                  { value: "light", label: "Peça clara", note: "a tinta pinta o escuro da arte" },
+                ]}
+              />
+              <Hint>
+                em peça escura o ponto cresce onde a arte é clara e forte, que é como a action do
+                Photoshop foi calibrada. Em peça clara a lógica inverte, como numa retícula comum.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="03" label="Tamanho da arte">
+              <OptionPills<ArtSize>
+                value={artSize}
+                onChange={setArtSize}
+                options={[
+                  { value: "original", label: "Original" },
+                  { value: "a4", label: "A4" },
+                  { value: "a3", label: "A3" },
+                  { value: "a2", label: "A2" },
+                  { value: "custom", label: "Person." },
+                ]}
+              />
+              {artSize === "custom" && (
+                <div className="grid grid-cols-2 gap-2">
+                  {(["w", "h"] as const).map((axis) => (
+                    <label key={axis} className="space-y-1">
+                      <span className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+                        {axis === "w" ? "Largura (cm)" : "Altura (cm)"}
+                      </span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={200}
+                        value={customCm[axis]}
+                        onChange={(e) =>
+                          setCustomCm((c) => ({ ...c, [axis]: Number(e.target.value) }))
+                        }
+                        className="w-full rounded-lg border border-border bg-secondary px-2 py-1.5 text-sm"
+                      />
+                    </label>
+                  ))}
+                </div>
+              )}
+              {output?.clamped && (
+                <p className="text-xs text-destructive">
+                  Resolução reduzida para caber na memória do navegador. Baixe o DPI para exportar
+                  no tamanho cheio.
                 </p>
               )}
-              {isPending && processed && (
-                <span className="absolute bottom-3 rounded bg-background/90 px-2 py-1 text-xs text-muted-foreground">
+            </ControlGroup>
+
+            <ControlGroup step="04" label="Qualidade da imagem">
+              <OptionPills<number>
+                value={dpi}
+                onChange={setDpi}
+                options={[300, 600, 1200].map((v) => ({ value: v, label: String(v) }))}
+              />
+              <Hint>
+                300 DPI já resolve a maioria dos trabalhos — é a base de 118,11 px/cm da action. Use
+                600 ou 1200 para arquivos maiores e mais detalhados.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="05" label="Frequência da retícula">
+              <OptionPills<number>
+                value={lpi}
+                onChange={setLpi}
+                options={[30, 35, 40, 45, 50].map((v) => ({ value: v, label: String(v) }))}
+              />
+              <Hint>
+                em LPI (linhas por polegada). <strong>35 LPI = 13,78 linhas/cm</strong>, o valor
+                conferido na action. Valores menores deixam os pontos maiores e mais separados.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="06" label="Forma e ângulo do ponto">
+              <OptionPills<number>
+                columns={2}
+                value={dotAspect}
+                onChange={setDotAspect}
+                options={[
+                  { value: PHOTOSHOP_ACTION.dotAspect, label: "Elipse" },
+                  { value: 1, label: "Redondo" },
+                ]}
+              />
+              <SliderRow
+                label="Ângulo"
+                value={angle}
+                min={0}
+                max={90}
+                step={1}
+                suffix="°"
+                onChange={setAngle}
+              />
+              <Hint>
+                22° é o ângulo verificado na action. 45° é o clássico de preto; 15° e 75° evitam
+                moiré quando a arte tem trama própria.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="07" label="Força do ponto">
+              <SliderRow
+                label="Força"
+                value={strength}
+                min={0.5}
+                max={2}
+                step={0.05}
+                onChange={setStrength}
+              />
+              <Hint>
+                multiplica o raio máximo do ponto. A partir de{" "}
+                <strong>{FUSION_STRENGTH.toFixed(2)}</strong> as áreas 100% cheias fecham totalmente
+                e viram bloco sólido — 1,25 deixa a retícula visível só nos degradês, sombras e nas
+                bordas que somem no transparente.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="08" label="Níveis">
+              <SliderRow
+                label="Preto de entrada"
+                value={black}
+                min={0}
+                max={0.9}
+                step={0.01}
+                onChange={setBlack}
+              />
+              <SliderRow
+                label="Branco de entrada"
+                value={white}
+                min={0.1}
+                max={1}
+                step={0.01}
+                onChange={setWhite}
+              />
+              <SliderRow
+                label="Gama"
+                value={gamma}
+                min={0.3}
+                max={3}
+                step={0.05}
+                onChange={setGamma}
+              />
+              <OptionPills<ToneCurve>
+                columns={2}
+                value={toneCurve}
+                onChange={setToneCurve}
+                options={[
+                  { value: "area", label: "Área" },
+                  { value: "linear", label: "Linear" },
+                ]}
+              />
+              <Hint>
+                "Área" é como a retícula de verdade se comporta — o que o olho lê como tom é a área
+                do ponto, não o raio. "Linear" clareia os meios-tons.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="09" label="Cor">
+              <OptionPills<ColorMode>
+                columns={1}
+                value={colorMode}
+                onChange={setColorMode}
+                options={[
+                  { value: "mono", label: "Monocromático", note: "uma tinta só, como a action" },
+                  { value: "rgb", label: "Colorido", note: "separa R, G e B em 3 ângulos" },
+                ]}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                {colorMode === "mono" && (
+                  <label className="space-y-1">
+                    <span className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+                      Cor da tinta
+                    </span>
+                    <input
+                      type="color"
+                      value={inkColor}
+                      onChange={(e) => setInkColor(e.target.value)}
+                      className="h-9 w-full cursor-pointer rounded-lg border border-border"
+                    />
+                  </label>
+                )}
+                <label className="space-y-1">
+                  <span className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+                    Cor do tecido
+                  </span>
+                  <input
+                    type="color"
+                    value={fabricColor}
+                    onChange={(e) => setFabricColor(e.target.value)}
+                    className="h-9 w-full cursor-pointer rounded-lg border border-border"
+                  />
+                </label>
+              </div>
+              <Hint>
+                a cor do tecido é só prévia. O arquivo exportado sai transparente, com os pontos de
+                tinta e mais nada.
+              </Hint>
+            </ControlGroup>
+
+            <div className="space-y-2 border-t border-border pt-4">
+              <PrimaryAction
+                className="w-full"
+                disabled={!source || exporting !== null}
+                onClick={() => handleExport("png")}
+              >
+                {exporting === "png" ? "Gerando…" : "Baixar PNG"}
+              </PrimaryAction>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  disabled={!source || exporting !== null}
+                  onClick={() => handleExport("pdf")}
+                  className="rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm font-semibold transition-colors hover:border-border-strong disabled:opacity-40"
+                >
+                  {exporting === "pdf" ? "Gerando…" : "Baixar PDF"}
+                </button>
+                <button
+                  type="button"
+                  onClick={restoreAction}
+                  className="rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm font-semibold transition-colors hover:border-border-strong"
+                >
+                  Padrão da action
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                A exportação é gerada em {dpi} DPI no tamanho cheio, não a partir da prévia.
+              </p>
+            </div>
+          </>
+        }
+      >
+        <PreviewStage
+          title="Prévia da arte"
+          caption={`Grayscale → níveis → tela de meio-tom ${dotAspect === 1 ? "redonda" : "elíptica"} a ${angle}°`}
+          status={status}
+          hint="A prévia é reduzida; os pontos ficam na mesma posição do arquivo final."
+        >
+          {preview ? (
+            <div
+              className="relative rounded-xl p-4 transition-colors"
+              style={{ backgroundColor: fabricColor }}
+            >
+              <canvas
+                ref={canvasRef}
+                role="img"
+                aria-label="Prévia do halftone"
+                className={`max-h-[60vh] max-w-full rounded-sm transition-opacity ${
+                  isPending ? "opacity-50" : ""
+                }`}
+              />
+              {isPending && (
+                <span className="absolute right-3 bottom-3 rounded-md bg-background/90 px-2 py-1 font-mono text-[10px] font-bold">
                   Recalculando…
                 </span>
               )}
             </div>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Input type="file" accept="image/*" onChange={handleFileChange} className="w-auto" />
-              {error && <span className="text-sm text-destructive">{error}</span>}
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              "Cor do tecido" acima é só pra simular a prévia — o arquivo exportado sai com fundo
-              transparente e só os pontos de tinta.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Ajustes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <ToolSlider
-              label="Tamanho da célula"
-              value={cellSize}
-              min={2}
-              max={40}
-              onChange={setCellSize}
-            />
-
-            <div className="space-y-2">
-              <Label>Ângulo da tela</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {ANGLE_PRESETS.map((preset) => (
-                  <Button
-                    key={preset.value}
-                    type="button"
-                    variant={angle === preset.value ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setAngle(preset.value)}
-                  >
-                    {preset.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Cor da tinta</Label>
-                <input
-                  type="color"
-                  value={inkColor}
-                  onChange={(e) => setInkColor(e.target.value)}
-                  className="h-9 w-full cursor-pointer rounded-md border"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Cor do tecido</Label>
-                <input
-                  type="color"
-                  value={swatch}
-                  onChange={(e) => setSwatch(e.target.value)}
-                  className="h-9 w-full cursor-pointer rounded-md border"
-                />
-              </div>
-            </div>
-
-            <Separator />
-            <CanvasExportButtons canvasRef={canvasRef} baseName={baseName} disabled={!processed} />
-          </CardContent>
-        </Card>
-      </div>
+          ) : (
+            <PreviewPlaceholder label="Envie uma imagem para começar" />
+          )}
+        </PreviewStage>
+      </ToolLayout>
     </ToolPageShell>
   );
 }

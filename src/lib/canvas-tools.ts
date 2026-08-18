@@ -27,6 +27,32 @@ export function imageToRGBAImage(img: HTMLImageElement): RGBAImage {
   return { data: imageData.data, width: canvas.width, height: canvas.height };
 }
 
+/**
+ * Resamples a loaded image to an exact pixel size and hands back its pixels.
+ *
+ * The halftone screen is defined in physical units (lines per inch on a page at
+ * a given DPI), so the art has to be resampled to the output resolution *before*
+ * it is screened — the same reason the Photoshop action sets the document
+ * resolution before converting to Bitmap. Uses the browser's own high-quality
+ * scaler rather than a hand-rolled filter.
+ */
+export function resampleImageToRGBA(
+  img: HTMLImageElement,
+  width: number,
+  height: number,
+): RGBAImage {
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(width));
+  canvas.height = Math.max(1, Math.round(height));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Could not get 2d canvas context");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  return { data: imageData.data, width: canvas.width, height: canvas.height };
+}
+
 export function drawRGBAImage(canvas: HTMLCanvasElement, image: RGBAImage) {
   canvas.width = image.width;
   canvas.height = image.height;
@@ -50,6 +76,25 @@ export function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob> {
     canvas.toBlob(
       (blob) => (blob ? resolve(blob) : reject(new Error("canvas.toBlob returned null"))),
       "image/png",
+    );
+  });
+}
+
+/** JPEG has no alpha, so anything transparent is flattened onto white first. */
+export function canvasToJpgBlob(canvas: HTMLCanvasElement, quality = 0.92): Promise<Blob> {
+  const flat = document.createElement("canvas");
+  flat.width = canvas.width;
+  flat.height = canvas.height;
+  const ctx = flat.getContext("2d");
+  if (!ctx) throw new Error("Could not get 2d canvas context");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, flat.width, flat.height);
+  ctx.drawImage(canvas, 0, 0);
+  return new Promise((resolve, reject) => {
+    flat.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error("canvas.toBlob returned null"))),
+      "image/jpeg",
+      quality,
     );
   });
 }
