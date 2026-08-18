@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronDown, Home, LayoutGrid } from "lucide-react";
-import { Logo } from "@/components/logo";
+import { Logo, PrintzyMark } from "@/components/logo";
 import { TOOLS } from "@/lib/tools";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +39,11 @@ function AppTopbar({ title, subtitle }: { title: string; subtitle: string }) {
         className="hidden h-full shrink-0 items-center border-r border-border px-5 md:flex md:w-(--sidebar-w)"
       >
         <Logo />
+      </Link>
+      {/* Below md the lockup is hidden and the topbar would carry no brand at
+          all, so the symbol stands in for it. */}
+      <Link to="/" className="flex h-full shrink-0 items-center pl-5 md:hidden">
+        <PrintzyMark gradient className="h-7" />
       </Link>
 
       <div className="min-w-0 flex-1 px-5">
