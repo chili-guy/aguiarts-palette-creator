@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ACTION_LEVELS,
   DEFAULT_LEVELS,
+  isolateArtwork,
+  type BackgroundKind,
   FUSION_STRENGTH,
   PHOTOSHOP_ACTION,
   gridSpacing,
@@ -11,6 +14,7 @@ import {
   type GarmentTone,
   type RGBAImage,
   type ToneCurve,
+  type ToneSource,
 } from "@/lib/image-core";
 import { ToolPageShell } from "@/components/tool-page-shell";
 import {
@@ -65,7 +69,10 @@ function HalftoneTool() {
   const [exporting, setExporting] = useState<null | "png" | "pdf">(null);
 
   // Everything below defaults to the values read off Rodrigo's verified action.
+  const [background, setBackground] = useState<BackgroundKind>("claro");
+  const [bgTolerance, setBgTolerance] = useState(50);
   const [garment, setGarment] = useState<GarmentTone>("dark");
+  const [toneSource, setToneSource] = useState<ToneSource>("valor");
   const [artSize, setArtSize] = useState<ArtSize>("original");
   const [customCm, setCustomCm] = useState({ w: 30, h: 40 });
   const [dpi, setDpi] = useState<number>(PHOTOSHOP_ACTION.dpi);
@@ -77,9 +84,9 @@ function HalftoneTool() {
   const [colorMode, setColorMode] = useState<ColorMode>("mono");
   const [inkColor, setInkColor] = useState("#ffffff");
   const [fabricColor, setFabricColor] = useState("#111111");
-  const [black, setBlack] = useState(DEFAULT_LEVELS.black);
-  const [white, setWhite] = useState(DEFAULT_LEVELS.white);
-  const [gamma, setGamma] = useState(DEFAULT_LEVELS.gamma);
+  const [black, setBlack] = useState(ACTION_LEVELS.black);
+  const [white, setWhite] = useState(ACTION_LEVELS.white);
+  const [gamma, setGamma] = useState(ACTION_LEVELS.gamma);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -122,7 +129,10 @@ function HalftoneTool() {
       strength,
       garment,
       toneCurve,
+      toneSource,
       colorMode,
+      background,
+      bgTolerance,
       levels: { black, white, gamma },
       inkColor: hexToRgb(inkColor),
     }),
@@ -134,7 +144,10 @@ function HalftoneTool() {
       strength,
       garment,
       toneCurve,
+      toneSource,
       colorMode,
+      background,
+      bgTolerance,
       black,
       white,
       gamma,
@@ -152,9 +165,16 @@ function HalftoneTool() {
     const scale = Math.min(1, PREVIEW_MAX_EDGE / Math.max(output.width, output.height));
     const w = Math.max(1, Math.round(output.width * scale));
     const h = Math.max(1, Math.round(output.height * scale));
+    // Clear the background before screening. Without this the screen reads an
+    // opaque backdrop as artwork, and on a dark garment a light backdrop asks
+    // for full ink across the whole sheet — the negative of the design.
+    const art = isolateArtwork(resampleImageToRGBA(source, w, h), {
+      kind: debounced.background,
+      tolerance: debounced.bgTolerance,
+    });
     // The same `scale` goes into the screen, so the preview's dots land exactly
     // where the full-resolution export's will.
-    return halftone(resampleImageToRGBA(source, w, h), { ...debounced, scale });
+    return halftone(art, { ...debounced, scale });
   }, [source, output, debounced]);
 
   useEffect(() => {
@@ -178,10 +198,11 @@ function HalftoneTool() {
   function renderFullSize(): HTMLCanvasElement {
     if (!source || !output) throw new Error("no image");
     const canvas = document.createElement("canvas");
-    drawRGBAImage(
-      canvas,
-      halftone(resampleImageToRGBA(source, output.width, output.height), options),
-    );
+    const art = isolateArtwork(resampleImageToRGBA(source, output.width, output.height), {
+      kind: background,
+      tolerance: bgTolerance,
+    });
+    drawRGBAImage(canvas, halftone(art, options));
     return canvas;
   }
 
@@ -210,9 +231,10 @@ function HalftoneTool() {
     setDotAspect(PHOTOSHOP_ACTION.dotAspect);
     setStrength(1.25);
     setToneCurve("area");
-    setBlack(DEFAULT_LEVELS.black);
-    setWhite(DEFAULT_LEVELS.white);
-    setGamma(DEFAULT_LEVELS.gamma);
+    setToneSource("valor");
+    setBlack(ACTION_LEVELS.black);
+    setWhite(ACTION_LEVELS.white);
+    setGamma(ACTION_LEVELS.gamma);
   }
 
   const baseName = `${fileName?.replace(/\.[^/.]+$/, "") || "imagem"}-halftone`;
@@ -251,7 +273,42 @@ function HalftoneTool() {
               {error && <p className="text-xs text-destructive">{error}</p>}
             </ControlGroup>
 
-            <ControlGroup step="02" label="Tipo de peça">
+            <ControlGroup step="02" label="Tipo de fundo">
+              <OptionPills<BackgroundKind>
+                columns={1}
+                value={background}
+                onChange={setBackground}
+                options={[
+                  { value: "claro", label: "Fundo claro", note: "remove branco e cinza claro" },
+                  {
+                    value: "escuro",
+                    label: "Fundo escuro",
+                    note: "ideal para artes em fundo preto",
+                  },
+                  { value: "colorido", label: "Fundo colorido", note: "remove a cor do fundo" },
+                  {
+                    value: "transparente",
+                    label: "Já sem fundo",
+                    note: "PNG que já veio recortado",
+                  },
+                ]}
+              />
+              {background !== "transparente" && (
+                <SliderRow
+                  label="Tolerância"
+                  value={bgTolerance}
+                  min={0}
+                  max={100}
+                  onChange={setBgTolerance}
+                />
+              )}
+              <Hint>
+                escolha o fundo mais parecido com a imagem para a limpeza ficar mais precisa. Sem
+                isso o fundo entra na conta como se fosse arte e sai reticulado junto.
+              </Hint>
+            </ControlGroup>
+
+            <ControlGroup step="03" label="Tipo de peça">
               <OptionPills<GarmentTone>
                 columns={1}
                 value={garment}
@@ -267,7 +324,7 @@ function HalftoneTool() {
               </Hint>
             </ControlGroup>
 
-            <ControlGroup step="03" label="Tamanho da arte">
+            <ControlGroup step="04" label="Tamanho da arte">
               <OptionPills<ArtSize>
                 value={artSize}
                 onChange={setArtSize}
@@ -308,7 +365,7 @@ function HalftoneTool() {
               )}
             </ControlGroup>
 
-            <ControlGroup step="04" label="Qualidade da imagem">
+            <ControlGroup step="05" label="Qualidade da imagem">
               <OptionPills<number>
                 value={dpi}
                 onChange={setDpi}
@@ -320,7 +377,7 @@ function HalftoneTool() {
               </Hint>
             </ControlGroup>
 
-            <ControlGroup step="05" label="Frequência da retícula">
+            <ControlGroup step="06" label="Frequência da retícula">
               <OptionPills<number>
                 value={lpi}
                 onChange={setLpi}
@@ -332,7 +389,7 @@ function HalftoneTool() {
               </Hint>
             </ControlGroup>
 
-            <ControlGroup step="06" label="Forma e ângulo do ponto">
+            <ControlGroup step="07" label="Forma e ângulo do ponto">
               <OptionPills<number>
                 columns={2}
                 value={dotAspect}
@@ -357,7 +414,7 @@ function HalftoneTool() {
               </Hint>
             </ControlGroup>
 
-            <ControlGroup step="07" label="Força do ponto">
+            <ControlGroup step="08" label="Força do ponto">
               <SliderRow
                 label="Força"
                 value={strength}
@@ -374,7 +431,7 @@ function HalftoneTool() {
               </Hint>
             </ControlGroup>
 
-            <ControlGroup step="08" label="Níveis">
+            <ControlGroup step="09" label="Níveis">
               <SliderRow
                 label="Preto de entrada"
                 value={black}
@@ -408,13 +465,24 @@ function HalftoneTool() {
                   { value: "linear", label: "Linear" },
                 ]}
               />
+              <OptionPills<ToneSource>
+                columns={2}
+                value={toneSource}
+                onChange={setToneSource}
+                options={[
+                  { value: "valor", label: "Cor viva" },
+                  { value: "luma", label: "Brilho" },
+                ]}
+              />
               <Hint>
                 "Área" é como a retícula de verdade se comporta — o que o olho lê como tom é a área
-                do ponto, não o raio. "Linear" clareia os meios-tons.
+                do ponto, não o raio. <strong>"Cor viva"</strong> trata vermelho e roxo saturados
+                como cor cheia, que é o que fecha sólido na peça escura; "Brilho" usa a luminância e
+                deixa esses tons ralos.
               </Hint>
             </ControlGroup>
 
-            <ControlGroup step="09" label="Cor">
+            <ControlGroup step="10" label="Cor">
               <OptionPills<ColorMode>
                 columns={1}
                 value={colorMode}

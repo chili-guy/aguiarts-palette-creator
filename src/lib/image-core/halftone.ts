@@ -42,6 +42,17 @@ export const PHOTOSHOP_ACTION = {
 export const FUSION_STRENGTH = Math.SQRT2;
 
 export type GarmentTone = "dark" | "light";
+
+/**
+ * Which measure of a pixel decides how much ink it gets.
+ *
+ * "luma" is perceived brightness, which is what a conventional screen uses.
+ * "valor" is the largest channel — HSV value — and it is what a single-ink
+ * garment print actually wants: a saturated red is a strong, fully-covered
+ * colour that should print near-solid, but its luma is only ~0.3, so a luma
+ * screen would render it as sparse dots and the artwork would fall apart.
+ */
+export type ToneSource = "luma" | "valor";
 export type ColorMode = "mono" | "rgb";
 /**
  * How a tone value maps to dot radius. "area" is what a real halftone screen
@@ -61,6 +72,22 @@ export interface Levels {
 }
 
 export const DEFAULT_LEVELS: Levels = { black: 0, white: 1, gamma: 1 };
+
+/**
+ * Levels the tool starts from.
+ *
+ * The action runs a Levels step before converting to Bitmap, to "estourar as
+ * sombras e realces" — clip the shadows and highlights — before the screen
+ * sees them. Rodrigo never sent the exact input/output numbers, so these are
+ * chosen to reproduce the behaviour he described rather than the digits: the
+ * white point sits low enough that a vivid, fully-covered area reaches full
+ * tone and its dots overlap into solid ink, and the black point drops the
+ * near-blacks that would otherwise print as isolated specks.
+ *
+ * Neutral levels are still one slider away, and are what the "Níveis" group
+ * resets to.
+ */
+export const ACTION_LEVELS: Levels = { black: 0.12, white: 0.82, gamma: 1 };
 
 export interface HalftoneOptions {
   /** Screen frequency in lines per inch. The action uses 35. */
@@ -87,6 +114,8 @@ export interface HalftoneOptions {
   /** Levels applied after grayscale, before the dots are sized. */
   levels?: Levels;
   toneCurve?: ToneCurve;
+  /** Defaults to "valor" on dark garments and "luma" on light ones. */
+  toneSource?: ToneSource;
   /**
    * "mono" screens luminance once and lays it down in inkColor. "rgb" screens
    * each channel on its own angle so the art keeps its colour, the way a
@@ -130,6 +159,7 @@ function radiusAt(
   x: number,
   y: number,
   channel: number,
+  toneSource: ToneSource,
   garment: GarmentTone,
   levels: Levels,
   toneCurve: ToneCurve,
@@ -142,10 +172,14 @@ function radiusAt(
   const alpha = src[idx + 3]! / 255;
   if (alpha === 0) return 0;
 
-  const value =
-    channel < 0
-      ? (0.299 * src[idx]! + 0.587 * src[idx + 1]! + 0.114 * src[idx + 2]!) / 255
-      : src[idx + channel]! / 255;
+  let value: number;
+  if (channel >= 0) {
+    value = src[idx + channel]! / 255;
+  } else if (toneSource === "valor") {
+    value = Math.max(src[idx]!, src[idx + 1]!, src[idx + 2]!) / 255;
+  } else {
+    value = (0.299 * src[idx]! + 0.587 * src[idx + 1]! + 0.114 * src[idx + 2]!) / 255;
+  }
 
   const tone = applyLevels(garment === "light" ? 1 - value : value, levels);
   const factor = tone * alpha;
@@ -172,6 +206,7 @@ function buildGrid(
   spacing: number,
   angleRad: number,
   channel: number,
+  toneSource: ToneSource,
   garment: GarmentTone,
   levels: Levels,
   toneCurve: ToneCurve,
@@ -222,6 +257,7 @@ function buildGrid(
         ox,
         oy,
         channel,
+        toneSource,
         garment,
         levels,
         toneCurve,
@@ -318,6 +354,10 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
     garment = "dark",
     levels = DEFAULT_LEVELS,
     toneCurve = "area",
+    // White ink on a dark garment prints the artwork's own strong colours, so
+    // "valor" is the right measure there; on a light garment the ink stands in
+    // for darkness and perceived brightness is what matters.
+    toneSource = garment === "dark" ? "valor" : "luma",
     colorMode = "mono",
     inkColor = [255, 255, 255],
     channelAngles = DEFAULT_CHANNEL_ANGLES,
@@ -333,7 +373,17 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
 
   if (colorMode === "mono") {
     const angleRad = (angle * Math.PI) / 180;
-    const grid = buildGrid(image, spacing, angleRad, -1, garment, levels, toneCurve, maxRadius);
+    const grid = buildGrid(
+      image,
+      spacing,
+      angleRad,
+      -1,
+      toneSource,
+      garment,
+      levels,
+      toneCurve,
+      maxRadius,
+    );
     const coverage = new Float32Array(pixels);
     rasterize(coverage, width, height, grid, spacing, angleRad, aspect);
 
@@ -358,6 +408,7 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
       spacing,
       angleRad,
       channel,
+      toneSource,
       garment,
       levels,
       toneCurve,
