@@ -15,6 +15,54 @@ import type { RGBAImage } from "./types";
 
 export type BackgroundKind = "escuro" | "colorido" | "claro" | "transparente";
 
+/**
+ * Blanks out background regions that never touch the image border.
+ *
+ * Matching on colour alone removes any pixel that *looks* like background,
+ * wherever it sits — so a white skull, a cream highlight or the paper showing
+ * through a logo's counter all vanish along with the backdrop. The backdrop is
+ * distinguished from artwork by connectivity, not by colour: it is the region
+ * that reaches the outside of the image.
+ *
+ * Iterative flood fill, because a full-bleed background is one region spanning
+ * every pixel and a recursive walk would exhaust the stack.
+ */
+function keepOnlyBorderConnected(mask: Float32Array, width: number, height: number) {
+  const n = width * height;
+  const reached = new Uint8Array(n);
+  const stack = new Int32Array(n);
+  let top = 0;
+
+  // Seed from any border pixel that reads as background at all. Partial matches
+  // seed too, otherwise a softly-lit edge would wall the fill off.
+  const push = (p: number) => {
+    if (!reached[p] && mask[p]! > 0) {
+      reached[p] = 1;
+      stack[top++] = p;
+    }
+  };
+  for (let x = 0; x < width; x++) {
+    push(x);
+    push((height - 1) * width + x);
+  }
+  for (let y = 0; y < height; y++) {
+    push(y * width);
+    push(y * width + width - 1);
+  }
+
+  while (top > 0) {
+    const p = stack[--top]!;
+    const px = p % width;
+    const py = (p / width) | 0;
+    if (px > 0) push(p - 1);
+    if (px < width - 1) push(p + 1);
+    if (py > 0) push(p - width);
+    if (py < height - 1) push(p + width);
+  }
+
+  for (let p = 0; p < n; p++) if (!reached[p]) mask[p] = 0;
+}
+
 export interface IsolateOptions {
   kind: BackgroundKind;
   /** 0..100. How far from the background a pixel may sit and still be dropped. */
@@ -26,6 +74,13 @@ export interface IsolateOptions {
   feather?: number;
   /** Overrides the sampled colour for `colorido`. */
   backgroundColor?: [number, number, number];
+  /**
+   * Restricts removal to the region touching the image border, so light or
+   * background-coloured areas *inside* the artwork survive. On by default;
+   * turn it off for art whose background is broken into pockets the border
+   * cannot reach.
+   */
+  borderConnectedOnly?: boolean;
 }
 
 const MAX_RGB_DISTANCE = Math.sqrt(3 * 255 * 255);
@@ -83,10 +138,15 @@ export function isolateArtwork(image: RGBAImage, options: IsolateOptions): RGBAI
   const soft = Math.min(100, Math.max(0, options.feather ?? 35)) / 100;
   const bg = options.backgroundColor ?? sampleBackground(image);
 
+  const mask = new Float32Array(width * height);
+
   for (let p = 0; p < width * height; p++) {
     const i = p * 4;
     const a = src[i + 3]!;
-    if (a === 0) continue;
+    if (a === 0) {
+      mask[p] = 1; // already transparent: counts as background for the fill
+      continue;
+    }
 
     const r = src[i]!;
     const g = src[i + 1]!;
@@ -126,12 +186,20 @@ export function isolateArtwork(image: RGBAImage, options: IsolateOptions): RGBAI
       }
     }
 
+    mask[p] = Math.min(1, Math.max(0, score));
+  }
+
+  if (options.borderConnectedOnly ?? true) keepOnlyBorderConnected(mask, width, height);
+
+  for (let p = 0; p < width * height; p++) {
+    const i = p * 4;
+    const score = mask[p]!;
+    if (score <= 0) continue;
     if (score >= 1) out[i + 3] = 0;
-    else if (score > 0) {
+    else {
       // `soft` decides how much of the partial band survives: at 0 the cut is
       // hard, at 1 the fade is fully honoured.
-      const keep = 1 - score * (0.35 + soft * 0.65);
-      out[i + 3] = a * keep;
+      out[i + 3] = src[i + 3]! * (1 - score * (0.35 + soft * 0.65));
     }
   }
 
