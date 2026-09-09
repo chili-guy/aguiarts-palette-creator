@@ -158,6 +158,8 @@ function HalftoneTool() {
   const [dotGain, setDotGain] = useState(DEFAULT_PRESET.dotGain);
   const [toneCurve, setToneCurve] = useState<ToneCurve>(DEFAULT_PRESET.toneCurve);
   const [colorMode, setColorMode] = useState<ColorMode>("mono");
+  const [screenSelective, setScreenSelective] = useState(false);
+  const [screenSelectiveStrength, setScreenSelectiveStrength] = useState(0.5);
   const [inkColor, setInkColor] = useState("#ffffff");
   const [fabricColor, setFabricColor] = useState("#111111");
   const [black, setBlack] = useState(DEFAULT_PRESET.levels.black);
@@ -251,6 +253,8 @@ function HalftoneTool() {
       toneCurve,
       toneSource,
       colorMode,
+      selective: screenSelective,
+      selectiveStrength: screenSelectiveStrength,
       background,
       bgTolerance,
       levels: { black, white, gamma },
@@ -268,6 +272,8 @@ function HalftoneTool() {
       toneCurve,
       toneSource,
       colorMode,
+      screenSelective,
+      screenSelectiveStrength,
       background,
       bgTolerance,
       black,
@@ -841,7 +847,35 @@ function HalftoneTool() {
                       </Hint>
                     </ControlGroup>
 
-                    <ControlGroup step="13" label="Cor">
+                    <ControlGroup step="13" label="Retícula seletiva">
+                      <OptionPills<"on" | "off">
+                        columns={2}
+                        value={screenSelective ? "on" : "off"}
+                        onChange={(v) => tweak(setScreenSelective)(v === "on")}
+                        options={[
+                          { value: "off", label: "Reticula tudo" },
+                          { value: "on", label: "Só nos degradês" },
+                        ]}
+                      />
+                      {screenSelective && (
+                        <SliderRow
+                          label="Sensibilidade"
+                          value={screenSelectiveStrength}
+                          min={0}
+                          max={1}
+                          step={0.05}
+                          onChange={tweak(setScreenSelectiveStrength)}
+                        />
+                      )}
+                      <Hint>
+                        com <strong>"Só nos degradês"</strong> a área de cor chapada passa direto,
+                        sólida — a retícula aparece só onde a arte tem sombreado / degradê. É o
+                        certo pra DTF, principalmente no modo <strong>Colorido</strong>.
+                        Sensibilidade mais alta pega blends mais suaves.
+                      </Hint>
+                    </ControlGroup>
+
+                    <ControlGroup step="14" label="Cor">
                       <OptionPills<ColorMode>
                         columns={1}
                         value={colorMode}

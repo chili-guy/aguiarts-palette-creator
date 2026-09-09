@@ -145,6 +145,19 @@ export interface HalftoneOptions {
    */
   sampling?: "area" | "point";
   /**
+   * Screen only the parts of the art that actually vary. Flat areas of colour
+   * pass straight through solid; the dot screen is applied only where there is
+   * a tonal gradient at the scale of the grid (soft shading, glows, blends).
+   * This is how a real DTF separation is screened — a flat fill or logo is
+   * never dot-screened.
+   */
+  selective?: boolean;
+  /**
+   * How readily `selective` counts an area as "varying", 0..1. Higher screens
+   * more (catches gentle blends); lower keeps more of the art solid.
+   */
+  selectiveStrength?: number;
+  /**
    * "mono" screens luminance once and lays it down in inkColor. "rgb" screens
    * each channel on its own angle so the art keeps its colour, the way a
    * separated print does.
@@ -389,6 +402,81 @@ function rasterize(
   }
 }
 
+/** Separable moving-average blur, in place-safe (returns a new buffer). */
+function boxBlur(src: Float32Array, width: number, height: number, radius: number): Float32Array {
+  const r = Math.max(1, Math.round(radius));
+  const win = r * 2 + 1;
+  const tmp = new Float32Array(src.length);
+  const out = new Float32Array(src.length);
+  for (let y = 0; y < height; y++) {
+    const row = y * width;
+    let acc = 0;
+    for (let x = -r; x <= r; x++) acc += src[row + Math.min(width - 1, Math.max(0, x))]!;
+    for (let x = 0; x < width; x++) {
+      tmp[row + x] = acc / win;
+      const add = row + Math.min(width - 1, x + r + 1);
+      const sub = row + Math.max(0, x - r);
+      acc += src[add]! - src[sub]!;
+    }
+  }
+  for (let x = 0; x < width; x++) {
+    let acc = 0;
+    for (let y = -r; y <= r; y++) acc += tmp[Math.min(height - 1, Math.max(0, y)) * width + x]!;
+    for (let y = 0; y < height; y++) {
+      out[y * width + x] = acc / win;
+      const add = Math.min(height - 1, y + r + 1) * width + x;
+      const sub = Math.max(0, y - r) * width + x;
+      acc += tmp[add]! - tmp[sub]!;
+    }
+  }
+  return out;
+}
+
+/**
+ * Per-pixel "screen me" mask, 0..1. It is the gradient magnitude of the
+ * artwork's luminance measured at the scale of the grid: a flat fill has none
+ * and stays solid, a soft blend has plenty and gets the dots. Hard edges show
+ * up only as a hairline of dots one cell wide, which is what a real screen does
+ * to an outline anyway.
+ */
+function buildSelectiveMask(
+  image: RGBAImage,
+  spacing: number,
+  strength: number,
+): Float32Array {
+  const { width, height, data } = image;
+  const n = width * height;
+  const lum = new Float32Array(n);
+  for (let p = 0; p < n; p++) {
+    const i = p * 4;
+    const a = data[i + 3]! / 255;
+    lum[p] =
+      a === 0
+        ? 0
+        : ((0.299 * data[i]! + 0.587 * data[i + 1]! + 0.114 * data[i + 2]!) / 255) * a;
+  }
+  // Blur to the cell scale so only gradients that survive at that scale count.
+  const smooth = boxBlur(lum, width, height, Math.max(1, spacing * 0.5));
+  const s = Math.max(1, Math.round(spacing * 0.5));
+  const k = 0.03 + (1 - clamp01(strength)) * 0.22; // low threshold = screens more
+  const mask = new Float32Array(n);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const p = y * width + x;
+      const xl = Math.max(0, x - s);
+      const xr = Math.min(width - 1, x + s);
+      const yt = Math.max(0, y - s);
+      const yb = Math.min(height - 1, y + s);
+      const gx = smooth[y * width + xr]! - smooth[y * width + xl]!;
+      const gy = smooth[yb * width + x]! - smooth[yt * width + x]!;
+      const grad = Math.sqrt(gx * gx + gy * gy);
+      mask[p] = smoothstep(k * 0.5, k * 2, grad);
+    }
+  }
+  // Soften the mask edge so the solid/screened boundary is not a hard line.
+  return boxBlur(mask, width, height, Math.max(1, spacing * 0.35));
+}
+
 /**
  * Composites the flat-ink layer over the dots: any pixel whose tone is at or
  * above `solidThreshold` reads as solid, with a short ramp below it so the edge
@@ -433,6 +521,8 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
     solidThreshold = DEFAULT_SOLID_THRESHOLD,
     dotGain = DEFAULT_DOT_GAIN,
     sampling = "area",
+    selective = false,
+    selectiveStrength = 0.5,
     colorMode = "mono",
     inkColor = [255, 255, 255],
     channelAngles = DEFAULT_CHANNEL_ANGLES,
@@ -446,6 +536,7 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
 
   const out = new Uint8ClampedArray(width * height * 4);
   const pixels = width * height;
+  const selMask = selective ? buildSelectiveMask(image, spacing, selectiveStrength) : null;
 
   if (colorMode === "mono") {
     const angleRad = (angle * Math.PI) / 180;
@@ -465,13 +556,19 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
     addSolidLayer(coverage, tone, solid);
 
     for (let p = 0; p < pixels; p++) {
-      const a = coverage[p]!;
+      let a = coverage[p]!;
+      if (selMask) {
+        // Outside the varying areas, a flat mid/dark fill prints solid ink and a
+        // flat light one prints nothing — the screen only shows in the blends.
+        const flat = smoothstep(0.15, 0.55, tone[p]!);
+        a = flat + (a - flat) * selMask[p]!;
+      }
       if (a <= 0) continue;
       const o = p * 4;
       out[o] = inkColor[0];
       out[o + 1] = inkColor[1];
       out[o + 2] = inkColor[2];
-      out[o + 3] = a * 255;
+      out[o + 3] = clamp01(a) * 255;
     }
     return { data: out, width, height };
   }
@@ -497,19 +594,37 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
     return coverage;
   }) as [Float32Array, Float32Array, Float32Array];
 
+  const src = image.data;
   for (let p = 0; p < pixels; p++) {
-    const cr = channels[0][p]!;
-    const cg = channels[1][p]!;
-    const cb = channels[2][p]!;
-    const a = Math.max(cr, cg, cb);
-    if (a <= 0) continue;
+    // Screened layer, in premultiplied 0..1: each channel coverage is already
+    // "how much of this ink is here".
+    let pr = channels[0][p]!;
+    let pg = channels[1][p]!;
+    let pb = channels[2][p]!;
+    let pa = Math.max(pr, pg, pb);
+
+    if (selMask) {
+      const m = selMask[p]!;
+      const o = p * 4;
+      const sa = src[o + 3]! / 255;
+      // Flat layer = the source pixel itself, premultiplied.
+      const fr = (src[o]! / 255) * sa;
+      const fg = (src[o + 1]! / 255) * sa;
+      const fb = (src[o + 2]! / 255) * sa;
+      pr = fr + (pr - fr) * m;
+      pg = fg + (pg - fg) * m;
+      pb = fb + (pb - fb) * m;
+      pa = sa + (pa - sa) * m;
+    }
+
+    if (pa <= 0) continue;
     const o = p * 4;
     // Un-premultiply so a partially covered edge pixel keeps its hue instead
     // of washing towards white.
-    out[o] = (cr / a) * 255;
-    out[o + 1] = (cg / a) * 255;
-    out[o + 2] = (cb / a) * 255;
-    out[o + 3] = a * 255;
+    out[o] = (pr / pa) * 255;
+    out[o + 1] = (pg / pa) * 255;
+    out[o + 2] = (pb / pa) * 255;
+    out[o + 3] = clamp01(pa) * 255;
   }
 
   return { data: out, width, height };
