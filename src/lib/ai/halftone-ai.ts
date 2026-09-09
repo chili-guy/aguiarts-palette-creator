@@ -343,18 +343,32 @@ function safeFalUrl(url: string | undefined, requestId: string): string | null {
 async function runFal(p: Provider, input: HalftoneAiInput): Promise<string> {
   const auth = { Authorization: `Key ${p.key}` };
   const base2 = `${FAL_QUEUE_BASE}/${p.model.split("/").slice(0, 2).join("/")}`;
+  const body = JSON.stringify(falBody(p, input));
 
-  const submit = await fetch(`${FAL_QUEUE_BASE}/${p.model}`, {
-    method: "POST",
-    headers: { ...auth, "Content-Type": "application/json" },
-    body: JSON.stringify(falBody(p, input)),
-  });
-  const sub = (await submit.json().catch(() => null)) as {
-    request_id?: string;
-    status_url?: string;
-    response_url?: string;
-  } | null;
-  if (!submit.ok || !sub?.request_id) throw new Error(falError(sub, submit.status));
+  // fal's balance check is flaky: it will 403 "Exhausted balance" on an account
+  // that has credit and then work on the next try. Retry the submit a few times
+  // before believing it — the submit itself costs nothing.
+  type FalSubmit = { request_id?: string; status_url?: string; response_url?: string };
+  let sub: FalSubmit | null = null;
+  let lastErr = "";
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (attempt > 0) await new Promise((r) => setTimeout(r, 1500));
+    const submit = await fetch(`${FAL_QUEUE_BASE}/${p.model}`, {
+      method: "POST",
+      headers: { ...auth, "Content-Type": "application/json" },
+      body,
+    });
+    const json = (await submit.json().catch(() => null)) as FalSubmit | null;
+    if (submit.ok && json?.request_id) {
+      sub = json;
+      break;
+    }
+    lastErr = falError(json, submit.status);
+    const transient =
+      submit.status === 403 && /lock|balance|top up|exhaust/i.test(JSON.stringify(json ?? ""));
+    if (!transient) throw new Error(lastErr);
+  }
+  if (!sub?.request_id) throw new Error(lastErr || "fal.ai não aceitou a requisição.");
 
   // Prefer the URLs fal returned; fall back to the documented first-two-segments
   // shape if they are missing.
