@@ -26,7 +26,18 @@ Pelo dashboard (recomendado, mantém o sync com o GitHub):
 1. vercel.com → **Add New… → Project** → importar `chili-guy/aguiarts-palette-creator`.
 2. Framework Preset: **Other** (o `vercel.json` já força isso).
 3. Node.js Version: **22.x**.
-4. Deploy. Não há variável de ambiente obrigatória.
+4. Deploy. Nenhuma variável de ambiente é obrigatória para o app rodar.
+
+### Variável opcional — motor de IA do Halftone
+
+O motor "IA (img2img)" da ferramenta Halftone chama o provedor fal.ai a partir de
+uma *server function*. Para ligá-lo, em **Settings → Environment Variables**:
+
+- `FAL_KEY` — chave da fal.ai (obrigatória só para esse motor)
+- `FAL_HALFTONE_MODEL`, `FAL_HALFTONE_MODE`, `FAL_HALFTONE_LORA_URL` — opcionais
+
+Sem `FAL_KEY`, o resto do site funciona normalmente e o botão "Gerar com IA"
+apenas retorna um erro pedindo a configuração. Detalhes em `IA-HALFTONE.md`.
 
 Pela CLI:
 
@@ -53,8 +64,9 @@ Para desenvolvimento normal continue usando `bun run dev` (porta 8080).
 
 ## Observações
 
-- As ferramentas processam imagem 100% no navegador; a function de SSR só entrega
-  HTML. Sem estado no servidor, sem banco, sem variável de ambiente.
+- As ferramentas processam imagem 100% no navegador; a function de SSR entrega
+  HTML e, se `FAL_KEY` estiver definida, hospeda as *server functions* do motor
+  de IA do Halftone (`submitHalftoneAI` / `pollHalftoneAI`). Sem banco.
 - O `u2netp.onnx` (~4 MB) vai como asset estático — entra no limite de deploy normal,
   mas é o maior arquivo do bundle.
 - O projeto continua ligado ao Lovable: builds feitos lá ignoram o preset `vercel` e

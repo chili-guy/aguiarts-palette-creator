@@ -20,6 +20,11 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Env (keep .env.example)
+.env
+.env.*
+!.env.example
+
 # Vercel
 .vercel
 
