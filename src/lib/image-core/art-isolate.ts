@@ -33,10 +33,13 @@ function keepOnlyBorderConnected(mask: Float32Array, width: number, height: numb
   const stack = new Int32Array(n);
   let top = 0;
 
-  // Seed from any border pixel that reads as background at all. Partial matches
-  // seed too, otherwise a softly-lit edge would wall the fill off.
+  // Only propagate through pixels that are a confident background match. A
+  // partial match — a light-but-real area of the artwork touching the edge —
+  // walls the fill off instead of letting it flood the whole shape, which is
+  // what used to erase flat light artwork on dark-garment jobs.
+  const FLOOD_MIN = 0.6;
   const push = (p: number) => {
-    if (!reached[p] && mask[p]! > 0) {
+    if (!reached[p] && mask[p]! >= FLOOD_MIN) {
       reached[p] = 1;
       stack[top++] = p;
     }
@@ -155,18 +158,20 @@ export function isolateArtwork(image: RGBAImage, options: IsolateOptions): RGBAI
 
     switch (options.kind) {
       case "claro": {
-        // White and light grey: bright and unsaturated. Requiring low
-        // saturation is what stops a pale yellow in the artwork from going
-        // with the paper.
+        // Paper white and the faintest grey only. The cut sits high on purpose:
+        // a flat light area of the artwork (a cream fill, a pale skin tone, a
+        // light-grey panel) is exactly what white ink prints on a dark garment,
+        // so it must not be mistaken for the sheet. Raise the tolerance if a
+        // real off-white background is being left behind.
         const l = luma(r, g, b);
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
         const sat = max === 0 ? 0 : (max - min) / max;
-        const cut = 1 - tol * 0.55;
+        const cut = 1 - tol * 0.32;
         score =
-          l >= cut && sat < 0.25
+          l >= cut && sat < 0.12
             ? 1
-            : Math.max(0, (l - (cut - 0.12)) / 0.12) * (sat < 0.25 ? 1 : 0);
+            : Math.max(0, (l - (cut - 0.08)) / 0.08) * (sat < 0.12 ? 1 : 0);
         break;
       }
       case "escuro": {

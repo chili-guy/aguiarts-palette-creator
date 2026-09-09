@@ -3,6 +3,7 @@ export * from "./color";
 export * from "./enhance";
 export * from "./halftone";
 export * from "./art-isolate";
+export * from "./ai-knockout";
 export * from "./spot-color";
 export * from "./frames";
 export * from "./choke";

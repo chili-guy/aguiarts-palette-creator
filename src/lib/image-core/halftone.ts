@@ -1,14 +1,24 @@
 import type { RGBAImage } from "./types";
 
 /**
- * Halftone screen calibrated against the Photoshop action Rodrigo verified for
- * dark-garment DTF/DTG.
+ * Halftone screen for dark- and light-garment DTF/DTG.
  *
- * The action is: Grayscale -> Mode: Bitmap -> Halftone Screen, ellipse dot,
- * 22 degrees, 13.78 lines/cm, on a 118.11 px/cm base. Photoshop reports those
- * two numbers in metric; 118.11 px/cm is just 300 DPI and 13.78 lines/cm is
- * 35 LPI, so the whole thing reduces to one number the screen actually cares
- * about: the grid spacing, dpi / lpi = 300 / 35 = 8.57 px.
+ * The geometry still starts from the Photoshop action Rodrigo verified —
+ * Grayscale -> Bitmap -> Halftone Screen, ellipse dot, 22 degrees, 35 LPI on a
+ * 300 DPI base, which reduces to one number: the grid spacing, dpi / lpi =
+ * 300 / 35 = 8.57 px — but three things changed after the tool was compared
+ * against an AI DTF converter and found to be losing the print:
+ *
+ *  1. Each cell now integrates the artwork it covers (a box average) instead of
+ *     reading a single pixel at its centre. Point sampling made fine detail
+ *     vanish and beat against the grid into moire; the average is what a real
+ *     screen "sees" and it renders thin lines as an even tone.
+ *  2. A full-resolution solid layer is composited over the dots: artwork whose
+ *     tone is at or above `solidThreshold` prints as flat ink, so saturated and
+ *     opaque areas come out clean instead of pinholed. Set the threshold to 1
+ *     for a pure photographic screen.
+ *  3. `dotGain` pre-shrinks the midtones so the print — where every dot spreads
+ *     on contact — lands on the tone the artwork actually asked for.
  */
 
 export const CM_PER_INCH = 2.54;
@@ -40,6 +50,13 @@ export const PHOTOSHOP_ACTION = {
  * fuses into one solid block. sqrt(2) on top of half the cell spacing.
  */
 export const FUSION_STRENGTH = Math.SQRT2;
+
+/** Tone at/above which a pixel prints as flat ink rather than a dot. 1 disables. */
+export const DEFAULT_SOLID_THRESHOLD = 0.9;
+/** Midtone compensation for press dot gain. 0 disables. */
+export const DEFAULT_DOT_GAIN = 0.1;
+/** Screen strength the tool starts from. */
+export const DEFAULT_STRENGTH = 1.25;
 
 export type GarmentTone = "dark" | "light";
 
@@ -76,18 +93,13 @@ export const DEFAULT_LEVELS: Levels = { black: 0, white: 1, gamma: 1 };
 /**
  * Levels the tool starts from.
  *
- * The action runs a Levels step before converting to Bitmap, to "estourar as
- * sombras e realces" — clip the shadows and highlights — before the screen
- * sees them. Rodrigo never sent the exact input/output numbers, so these are
- * chosen to reproduce the behaviour he described rather than the digits: the
- * white point sits low enough that a vivid, fully-covered area reaches full
- * tone and its dots overlap into solid ink, and the black point drops the
- * near-blacks that would otherwise print as isolated specks.
- *
- * Neutral levels are still one slider away, and are what the "Níveis" group
- * resets to.
+ * A gentle clip — drop the deepest shadows that would otherwise print as
+ * isolated specks, and let a bright, fully-covered area reach full tone — with
+ * most of the range left intact. The old defaults (0.12 / 0.82) clipped so hard
+ * that, stacked on the background cleaner and a below-fusion strength, almost
+ * nothing survived to the screen.
  */
-export const ACTION_LEVELS: Levels = { black: 0.12, white: 0.82, gamma: 1 };
+export const ACTION_LEVELS: Levels = { black: 0.06, white: 0.92, gamma: 1 };
 
 export interface HalftoneOptions {
   /** Screen frequency in lines per inch. The action uses 35. */
@@ -100,9 +112,7 @@ export interface HalftoneOptions {
   dotAspect?: number;
   /**
    * Multiplier on the dot's maximum radius, which is half the grid spacing.
-   * Above FUSION_STRENGTH a 100% area is fully covered and reads as solid ink;
-   * the reference snippet used 1.25, just short of that, so the very darkest
-   * areas keep a hair of texture.
+   * Above FUSION_STRENGTH a 100% area is fully covered and reads as solid ink.
    */
   strength?: number;
   /**
@@ -116,6 +126,37 @@ export interface HalftoneOptions {
   toneCurve?: ToneCurve;
   /** Defaults to "valor" on dark garments and "luma" on light ones. */
   toneSource?: ToneSource;
+  /**
+   * Tone (after levels, 0..1) at or above which a pixel prints as flat ink
+   * instead of a dot, composited at full resolution so the edge stays crisp.
+   * This is what makes saturated / opaque areas come out solid. 1 turns it off
+   * for a pure photographic screen.
+   */
+  solidThreshold?: number;
+  /**
+   * Press dot-gain compensation, 0..~0.4. Every printed dot spreads on contact,
+   * so the midtones come out darker than asked; this shrinks them by
+   * `gain * t * (1 - t)` beforehand, leaving paper and solids untouched.
+   */
+  dotGain?: number;
+  /**
+   * "area" (default) integrates the artwork under each cell — kills moire and
+   * keeps fine detail. "point" reads the cell centre only; kept for comparison.
+   */
+  sampling?: "area" | "point";
+  /**
+   * Screen only the parts of the art that actually vary. Flat areas of colour
+   * pass straight through solid; the dot screen is applied only where there is
+   * a tonal gradient at the scale of the grid (soft shading, glows, blends).
+   * This is how a real DTF separation is screened — a flat fill or logo is
+   * never dot-screened.
+   */
+  selective?: boolean;
+  /**
+   * How readily `selective` counts an area as "varying", 0..1. Higher screens
+   * more (catches gentle blends); lower keeps more of the art solid.
+   */
+  selectiveStrength?: number;
   /**
    * "mono" screens luminance once and lays it down in inkColor. "rgb" screens
    * each channel on its own angle so the art keeps its colour, the way a
@@ -139,53 +180,62 @@ export function gridSpacing(dpi: number, lpi: number): number {
   return dpi / Math.max(1e-6, lpi);
 }
 
+function clamp01(v: number): number {
+  return v < 0 ? 0 : v > 1 ? 1 : v;
+}
+
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  if (edge1 <= edge0) return x >= edge1 ? 1 : 0;
+  const t = clamp01((x - edge0) / (edge1 - edge0));
+  return t * t * (3 - 2 * t);
+}
+
 function applyLevels(value: number, levels: Levels): number {
   const span = Math.max(1e-6, levels.white - levels.black);
-  const t = Math.min(1, Math.max(0, (value - levels.black) / span));
+  const t = clamp01((value - levels.black) / span);
   return levels.gamma === 1 ? t : Math.pow(t, 1 / levels.gamma);
 }
 
 /**
- * Samples one cell centre and returns the dot radius for it.
+ * Per-pixel print tone: garment-adjusted source value, run through levels and
+ * dot-gain, multiplied by source alpha. 0 = paper, 1 = full ink. The dot curve
+ * (area / linear) is applied later, per cell.
  *
- * `channel` is -1 for luminance, or 0/1/2 for R/G/B. Transparent pixels return
- * 0 so art that fades out tapers into isolated dots and then nothing, instead
- * of stopping at a hard edge.
+ * `channel` is -1 for luminance/valor, or 0/1/2 for R/G/B.
  */
-function radiusAt(
-  src: Uint8ClampedArray,
-  width: number,
-  height: number,
-  x: number,
-  y: number,
+function buildToneField(
+  image: RGBAImage,
   channel: number,
   toneSource: ToneSource,
   garment: GarmentTone,
   levels: Levels,
-  toneCurve: ToneCurve,
-  maxRadius: number,
-): number {
-  const cx = Math.min(width - 1, Math.max(0, Math.round(x)));
-  const cy = Math.min(height - 1, Math.max(0, Math.round(y)));
-  const idx = (cy * width + cx) * 4;
+  dotGain: number,
+): Float32Array {
+  const { width, height, data } = image;
+  const n = width * height;
+  const field = new Float32Array(n);
+  const gain = Math.max(0, Math.min(0.6, dotGain));
 
-  const alpha = src[idx + 3]! / 255;
-  if (alpha === 0) return 0;
+  for (let p = 0; p < n; p++) {
+    const i = p * 4;
+    const alpha = data[i + 3]! / 255;
+    if (alpha === 0) continue;
 
-  let value: number;
-  if (channel >= 0) {
-    value = src[idx + channel]! / 255;
-  } else if (toneSource === "valor") {
-    value = Math.max(src[idx]!, src[idx + 1]!, src[idx + 2]!) / 255;
-  } else {
-    value = (0.299 * src[idx]! + 0.587 * src[idx + 1]! + 0.114 * src[idx + 2]!) / 255;
+    let value: number;
+    if (channel >= 0) {
+      value = data[i + channel]! / 255;
+    } else if (toneSource === "valor") {
+      value = Math.max(data[i]!, data[i + 1]!, data[i + 2]!) / 255;
+    } else {
+      value = (0.299 * data[i]! + 0.587 * data[i + 1]! + 0.114 * data[i + 2]!) / 255;
+    }
+
+    let t = applyLevels(garment === "light" ? 1 - value : value, levels);
+    if (gain > 0) t = clamp01(t - gain * t * (1 - t));
+    field[p] = t * alpha;
   }
 
-  const tone = applyLevels(garment === "light" ? 1 - value : value, levels);
-  const factor = tone * alpha;
-  if (factor <= 0) return 0;
-
-  return maxRadius * (toneCurve === "area" ? Math.sqrt(factor) : factor);
+  return field;
 }
 
 interface Grid {
@@ -198,21 +248,24 @@ interface Grid {
 }
 
 /**
- * Builds the rotated dot grid once, sampling the source at each cell centre,
- * so the per-pixel rasterisation below is a pure geometry test.
+ * Builds the rotated dot grid.
+ *
+ * "area" scatters every source pixel into the rotated cell it falls in and
+ * takes the mean — a true box average over the cell, no summed-area table and
+ * no per-cell resampling. "point" keeps the old behaviour of reading the cell
+ * centre. Either way the stored value is the finished dot radius, so the
+ * rasteriser below is a pure geometry test.
  */
 function buildGrid(
-  image: RGBAImage,
+  tone: Float32Array,
+  width: number,
+  height: number,
   spacing: number,
   angleRad: number,
-  channel: number,
-  toneSource: ToneSource,
-  garment: GarmentTone,
-  levels: Levels,
   toneCurve: ToneCurve,
   maxRadius: number,
+  sampling: "area" | "point",
 ): Grid {
-  const { width, height, data } = image;
   const cos = Math.cos(angleRad);
   const sin = Math.sin(angleRad);
 
@@ -241,29 +294,45 @@ function buildGrid(
   const j0 = Math.floor(minRy / spacing) - 1;
   const cols = Math.floor(maxRx / spacing) - i0 + 2;
   const rows = Math.floor(maxRy / spacing) - j0 + 2;
+  const cellCount = cols * rows;
 
-  const radii = new Float32Array(cols * rows);
-  for (let j = 0; j < rows; j++) {
-    const rcy = (j0 + j + 0.5) * spacing;
-    for (let i = 0; i < cols; i++) {
-      const rcx = (i0 + i + 0.5) * spacing;
-      // Rotate the cell centre back into image space to sample it.
-      const ox = rcx * cos - rcy * sin;
-      const oy = rcx * sin + rcy * cos;
-      radii[j * cols + i] = radiusAt(
-        data,
-        width,
-        height,
-        ox,
-        oy,
-        channel,
-        toneSource,
-        garment,
-        levels,
-        toneCurve,
-        maxRadius,
-      );
+  const radii = new Float32Array(cellCount);
+  const curve = (t: number) => (toneCurve === "area" ? Math.sqrt(t) : t);
+
+  if (sampling === "point") {
+    for (let j = 0; j < rows; j++) {
+      const rcy = (j0 + j + 0.5) * spacing;
+      for (let i = 0; i < cols; i++) {
+        const rcx = (i0 + i + 0.5) * spacing;
+        const ox = Math.round(rcx * cos - rcy * sin);
+        const oy = Math.round(rcx * sin + rcy * cos);
+        if (ox < 0 || ox >= width || oy < 0 || oy >= height) continue;
+        radii[j * cols + i] = maxRadius * curve(clamp01(tone[oy * width + ox]!));
+      }
     }
+    return { radii, i0, j0, cols, rows };
+  }
+
+  const accum = new Float64Array(cellCount);
+  const count = new Uint32Array(cellCount);
+  for (let y = 0; y < height; y++) {
+    const ySin = y * sin;
+    const yCos = y * cos;
+    for (let x = 0; x < width; x++) {
+      const rx = x * cos + ySin;
+      const ry = -x * sin + yCos;
+      const ci = Math.floor(rx / spacing) - i0;
+      const cj = Math.floor(ry / spacing) - j0;
+      if (ci < 0 || ci >= cols || cj < 0 || cj >= rows) continue;
+      const c = cj * cols + ci;
+      accum[c] = accum[c]! + tone[y * width + x]!;
+      count[c] = count[c]! + 1;
+    }
+  }
+  for (let c = 0; c < cellCount; c++) {
+    const k = count[c]!;
+    if (k === 0) continue;
+    radii[c] = maxRadius * curve(clamp01(accum[c]! / k));
   }
 
   return { radii, i0, j0, cols, rows };
@@ -318,27 +387,118 @@ function rasterize(
           const ny = dy / b;
           const d = Math.sqrt(nx * nx + ny * ny);
 
-          // Antialias across roughly one pixel at the ellipse edge.
-          const cov = Math.min(1, Math.max(0, (1 - d) * b + 0.5));
+          // Antialias across ~1px at the edge, scaled by the dot's own size so
+          // the ramp stays a pixel wide whether the dot is tiny or fused.
+          const edge = Math.sqrt(a * b);
+          const cov = clamp01((1 - d) * edge + 0.5);
           if (cov > best) {
             best = cov;
             if (best >= 1) break;
           }
         }
       }
-      coverage[y * width + x] = best;
+      if (best > coverage[y * width + x]!) coverage[y * width + x] = best;
     }
   }
 }
 
+/** Separable moving-average blur, in place-safe (returns a new buffer). */
+function boxBlur(src: Float32Array, width: number, height: number, radius: number): Float32Array {
+  const r = Math.max(1, Math.round(radius));
+  const win = r * 2 + 1;
+  const tmp = new Float32Array(src.length);
+  const out = new Float32Array(src.length);
+  for (let y = 0; y < height; y++) {
+    const row = y * width;
+    let acc = 0;
+    for (let x = -r; x <= r; x++) acc += src[row + Math.min(width - 1, Math.max(0, x))]!;
+    for (let x = 0; x < width; x++) {
+      tmp[row + x] = acc / win;
+      const add = row + Math.min(width - 1, x + r + 1);
+      const sub = row + Math.max(0, x - r);
+      acc += src[add]! - src[sub]!;
+    }
+  }
+  for (let x = 0; x < width; x++) {
+    let acc = 0;
+    for (let y = -r; y <= r; y++) acc += tmp[Math.min(height - 1, Math.max(0, y)) * width + x]!;
+    for (let y = 0; y < height; y++) {
+      out[y * width + x] = acc / win;
+      const add = Math.min(height - 1, y + r + 1) * width + x;
+      const sub = Math.max(0, y - r) * width + x;
+      acc += tmp[add]! - tmp[sub]!;
+    }
+  }
+  return out;
+}
+
 /**
- * Screens an image into halftone dots.
- *
- * Dot radius is driven by tone *and* by the source alpha, which is what makes
- * the result behave like the reference print: fully-opaque saturated areas ask
- * for a radius past the grid spacing, so the dots overlap and read as solid,
- * while gradients, shadows and the fade to transparent are the only places the
- * individual dots stay visible.
+ * Per-pixel "screen me" mask, 0..1. It is the gradient magnitude of the
+ * artwork's luminance measured at the scale of the grid: a flat fill has none
+ * and stays solid, a soft blend has plenty and gets the dots. Hard edges show
+ * up only as a hairline of dots one cell wide, which is what a real screen does
+ * to an outline anyway.
+ */
+function buildSelectiveMask(
+  image: RGBAImage,
+  spacing: number,
+  strength: number,
+): Float32Array {
+  const { width, height, data } = image;
+  const n = width * height;
+  const lum = new Float32Array(n);
+  for (let p = 0; p < n; p++) {
+    const i = p * 4;
+    const a = data[i + 3]! / 255;
+    lum[p] =
+      a === 0
+        ? 0
+        : ((0.299 * data[i]! + 0.587 * data[i + 1]! + 0.114 * data[i + 2]!) / 255) * a;
+  }
+  // Blur to the cell scale so only gradients that survive at that scale count.
+  const smooth = boxBlur(lum, width, height, Math.max(1, spacing * 0.5));
+  const s = Math.max(1, Math.round(spacing * 0.5));
+  const k = 0.03 + (1 - clamp01(strength)) * 0.22; // low threshold = screens more
+  const mask = new Float32Array(n);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const p = y * width + x;
+      const xl = Math.max(0, x - s);
+      const xr = Math.min(width - 1, x + s);
+      const yt = Math.max(0, y - s);
+      const yb = Math.min(height - 1, y + s);
+      const gx = smooth[y * width + xr]! - smooth[y * width + xl]!;
+      const gy = smooth[yb * width + x]! - smooth[yt * width + x]!;
+      const grad = Math.sqrt(gx * gx + gy * gy);
+      mask[p] = smoothstep(k * 0.5, k * 2, grad);
+    }
+  }
+  // Soften the mask edge so the solid/screened boundary is not a hard line.
+  return boxBlur(mask, width, height, Math.max(1, spacing * 0.35));
+}
+
+/**
+ * Composites the flat-ink layer over the dots: any pixel whose tone is at or
+ * above `solidThreshold` reads as solid, with a short ramp below it so the edge
+ * keeps the artwork's own anti-aliasing. Runs at full pixel resolution, which
+ * is what preserves thin features the dot grid is too coarse to hold.
+ */
+function addSolidLayer(
+  coverage: Float32Array,
+  tone: Float32Array,
+  solidThreshold: number,
+) {
+  if (solidThreshold >= 0.999) return;
+  const band = Math.max(0.03, (1 - solidThreshold) * 0.75);
+  const lo = Math.max(0, solidThreshold - band);
+  for (let p = 0; p < coverage.length; p++) {
+    const s = smoothstep(lo, solidThreshold, tone[p]!);
+    if (s > coverage[p]!) coverage[p] = s;
+  }
+}
+
+/**
+ * Screens an image into halftone dots plus a solid layer.
  *
  * Output is transparent where there is no ink, so it drops straight onto a
  * garment mockup or into a DTF sheet.
@@ -350,7 +510,7 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
     dpi,
     angle,
     dotAspect = PHOTOSHOP_ACTION.dotAspect,
-    strength = 1.25,
+    strength = DEFAULT_STRENGTH,
     garment = "dark",
     levels = DEFAULT_LEVELS,
     toneCurve = "area",
@@ -358,6 +518,11 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
     // "valor" is the right measure there; on a light garment the ink stands in
     // for darkness and perceived brightness is what matters.
     toneSource = garment === "dark" ? "valor" : "luma",
+    solidThreshold = DEFAULT_SOLID_THRESHOLD,
+    dotGain = DEFAULT_DOT_GAIN,
+    sampling = "area",
+    selective = false,
+    selectiveStrength = 0.5,
     colorMode = "mono",
     inkColor = [255, 255, 255],
     channelAngles = DEFAULT_CHANNEL_ANGLES,
@@ -367,34 +532,43 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
   const spacing = Math.max(2, gridSpacing(dpi, lpi) * scale);
   const maxRadius = (spacing / 2) * Math.min(2, Math.max(0.1, strength));
   const aspect = Math.min(1, Math.max(0.2, dotAspect));
+  const solid = Math.min(1, Math.max(0.3, solidThreshold));
 
   const out = new Uint8ClampedArray(width * height * 4);
   const pixels = width * height;
+  const selMask = selective ? buildSelectiveMask(image, spacing, selectiveStrength) : null;
 
   if (colorMode === "mono") {
     const angleRad = (angle * Math.PI) / 180;
+    const tone = buildToneField(image, -1, toneSource, garment, levels, dotGain);
     const grid = buildGrid(
-      image,
+      tone,
+      width,
+      height,
       spacing,
       angleRad,
-      -1,
-      toneSource,
-      garment,
-      levels,
       toneCurve,
       maxRadius,
+      sampling,
     );
     const coverage = new Float32Array(pixels);
     rasterize(coverage, width, height, grid, spacing, angleRad, aspect);
+    addSolidLayer(coverage, tone, solid);
 
     for (let p = 0; p < pixels; p++) {
-      const a = coverage[p]!;
+      let a = coverage[p]!;
+      if (selMask) {
+        // Outside the varying areas, a flat mid/dark fill prints solid ink and a
+        // flat light one prints nothing — the screen only shows in the blends.
+        const flat = smoothstep(0.15, 0.55, tone[p]!);
+        a = flat + (a - flat) * selMask[p]!;
+      }
       if (a <= 0) continue;
       const o = p * 4;
       out[o] = inkColor[0];
       out[o + 1] = inkColor[1];
       out[o + 2] = inkColor[2];
-      out[o + 3] = a * 255;
+      out[o + 3] = clamp01(a) * 255;
     }
     return { data: out, width, height };
   }
@@ -403,36 +577,159 @@ export function halftone(image: RGBAImage, options: HalftoneOptions): RGBAImage 
   // never line up and produce a moire pattern.
   const channels = [0, 1, 2].map((channel) => {
     const angleRad = (channelAngles[channel]! * Math.PI) / 180;
+    const tone = buildToneField(image, channel, toneSource, garment, levels, dotGain);
     const grid = buildGrid(
-      image,
+      tone,
+      width,
+      height,
       spacing,
       angleRad,
-      channel,
-      toneSource,
-      garment,
-      levels,
       toneCurve,
       maxRadius,
+      sampling,
     );
     const coverage = new Float32Array(pixels);
     rasterize(coverage, width, height, grid, spacing, angleRad, aspect);
+    addSolidLayer(coverage, tone, solid);
     return coverage;
   }) as [Float32Array, Float32Array, Float32Array];
 
+  const src = image.data;
   for (let p = 0; p < pixels; p++) {
-    const cr = channels[0][p]!;
-    const cg = channels[1][p]!;
-    const cb = channels[2][p]!;
-    const a = Math.max(cr, cg, cb);
-    if (a <= 0) continue;
+    // Screened layer, in premultiplied 0..1: each channel coverage is already
+    // "how much of this ink is here".
+    let pr = channels[0][p]!;
+    let pg = channels[1][p]!;
+    let pb = channels[2][p]!;
+    let pa = Math.max(pr, pg, pb);
+
+    if (selMask) {
+      const m = selMask[p]!;
+      const o = p * 4;
+      const sa = src[o + 3]! / 255;
+      // Flat layer = the source pixel itself, premultiplied.
+      const fr = (src[o]! / 255) * sa;
+      const fg = (src[o + 1]! / 255) * sa;
+      const fb = (src[o + 2]! / 255) * sa;
+      pr = fr + (pr - fr) * m;
+      pg = fg + (pg - fg) * m;
+      pb = fb + (pb - fb) * m;
+      pa = sa + (pa - sa) * m;
+    }
+
+    if (pa <= 0) continue;
     const o = p * 4;
     // Un-premultiply so a partially covered edge pixel keeps its hue instead
     // of washing towards white.
-    out[o] = (cr / a) * 255;
-    out[o + 1] = (cg / a) * 255;
-    out[o + 2] = (cb / a) * 255;
-    out[o + 3] = a * 255;
+    out[o] = (pr / pa) * 255;
+    out[o + 1] = (pg / pa) * 255;
+    out[o + 2] = (pb / pa) * 255;
+    out[o + 3] = clamp01(pa) * 255;
   }
 
   return { data: out, width, height };
 }
+
+/**
+ * One-click starting points. Each bundles the screen, the tone mapping and the
+ * background cleaner into a setup that just works for a common job, so the ten
+ * advanced groups stay folded away for most users.
+ *
+ * `bg` is the background-cleaner mode the route should switch to; `null` leaves
+ * the user's current choice alone.
+ */
+export interface HalftonePreset {
+  id: string;
+  label: string;
+  note: string;
+  garment: GarmentTone;
+  toneSource: ToneSource;
+  toneCurve: ToneCurve;
+  lpi: number;
+  angle: number;
+  dotAspect: number;
+  strength: number;
+  solidThreshold: number;
+  dotGain: number;
+  levels: Levels;
+}
+
+export const HALFTONE_PRESETS: HalftonePreset[] = [
+  {
+    id: "escura-linha",
+    label: "Peça escura · arte/logo",
+    note: "chapados limpos, retícula só nos degradês",
+    garment: "dark",
+    toneSource: "valor",
+    toneCurve: "area",
+    lpi: 40,
+    angle: 22,
+    dotAspect: PHOTOSHOP_ACTION.dotAspect,
+    strength: 1.3,
+    solidThreshold: 0.86,
+    dotGain: 0.1,
+    levels: { black: 0.06, white: 0.92, gamma: 1 },
+  },
+  {
+    id: "escura-foto",
+    label: "Peça escura · foto",
+    note: "retícula pura, sem chapar as altas luzes",
+    garment: "dark",
+    toneSource: "valor",
+    toneCurve: "area",
+    lpi: 35,
+    angle: 22,
+    dotAspect: PHOTOSHOP_ACTION.dotAspect,
+    strength: 1.15,
+    solidThreshold: 1,
+    dotGain: 0.14,
+    levels: { black: 0.03, white: 0.97, gamma: 1.05 },
+  },
+  {
+    id: "clara-linha",
+    label: "Peça clara · arte/logo",
+    note: "a tinta pinta o escuro da arte",
+    garment: "light",
+    toneSource: "luma",
+    toneCurve: "area",
+    lpi: 40,
+    angle: 45,
+    dotAspect: PHOTOSHOP_ACTION.dotAspect,
+    strength: 1.3,
+    solidThreshold: 0.84,
+    dotGain: 0.1,
+    levels: { black: 0.06, white: 0.92, gamma: 1 },
+  },
+  {
+    id: "clara-foto",
+    label: "Peça clara · foto",
+    note: "retícula clássica de preto a 45°",
+    garment: "light",
+    toneSource: "luma",
+    toneCurve: "area",
+    lpi: 35,
+    angle: 45,
+    dotAspect: PHOTOSHOP_ACTION.dotAspect,
+    strength: 1.15,
+    solidThreshold: 1,
+    dotGain: 0.14,
+    levels: { black: 0.03, white: 0.97, gamma: 1.05 },
+  },
+  {
+    id: "chapado",
+    label: "Chapado forte",
+    note: "fecha tudo, textura só na transição",
+    garment: "dark",
+    toneSource: "valor",
+    toneCurve: "area",
+    lpi: 35,
+    angle: 22,
+    dotAspect: PHOTOSHOP_ACTION.dotAspect,
+    strength: 1.6,
+    solidThreshold: 0.7,
+    dotGain: 0.06,
+    levels: { black: 0.08, white: 0.88, gamma: 1 },
+  },
+];
+
+export const DEFAULT_PRESET_ID = "escura-linha";
